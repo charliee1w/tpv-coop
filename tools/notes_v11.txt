@@ -1,0 +1,8 @@
+**Launcher fix: the window no longer closes without a word**
+- If anything goes wrong, the window now stays open and says what happened, instead of closing right away. The same text is saved in `launcher\last-run.txt`, so you can send that file.
+- The update check no longer stops the launcher if Windows' temp folder can't be used; it uses a folder next to the launcher instead.
+- The .bat files start Windows PowerShell by its full path.
+
+**If your .bat closed right away:** download TPV-co-op.zip below once and unzip it over your old folder (or into a new one). The fixed launcher can't reach you through the old one's update check.
+
+The Pink Valley is by Vamvilodon. Ella's HUD faces are by TURI. This co-op add-on is an unofficial fan project by gore.

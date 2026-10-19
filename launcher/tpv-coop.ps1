@@ -16,6 +16,26 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $LauncherDir = $PSScriptRoot
+
+# Everything this window shows also goes to launcher\last-run.txt, so someone whose launcher fails
+# can send that file.
+$script:Logging = $false
+try { Start-Transcript -LiteralPath (Join-Path $LauncherDir 'last-run.txt') -Force | Out-Null; $script:Logging = $true } catch { }
+
+# Any error nobody planned for: say what it was and keep the window open. Without this the window
+# just closes and nobody can see why. Exit code 0 tells the .bat the message was already shown.
+trap {
+    $msg = $_.Exception.Message
+    $line = $_.InvocationInfo.ScriptLineNumber
+    try {
+        Write-Host ''
+        Write-Host ("Something went wrong: {0} (launcher line {1})" -f $msg, $line) -ForegroundColor Red
+        Write-Host 'Send a screenshot of this window (or the file launcher\last-run.txt) to whoever gave you the co-op files.' -ForegroundColor Yellow
+    } catch { }
+    if ($script:Logging) { try { Stop-Transcript | Out-Null } catch { } }
+    try { Read-Host 'Press Enter to close' | Out-Null } catch { }
+    exit 0
+}
 $Root = Split-Path -Parent $LauncherDir
 $SettingsFile = Join-Path $LauncherDir 'settings.json'
 $Repo = 'charliee1w/tpv-coop'
@@ -36,11 +56,14 @@ $Skills = @('SNOWFLAKE', 'RAGE QUIT', 'COMPETENT PEOPLE', 'COMPETENT AND A LITTL
 
 function Say([string]$Text = '', [string]$Color = 'Gray') { Write-Host $Text -ForegroundColor $Color }
 
+# A problem the launcher understands: explain it and wait. Exit code 0: the .bat only pauses on
+# its own when PowerShell stopped without a word.
 function Quit([string]$Why) {
     Say ''
     Say $Why 'Red'
+    if ($script:Logging) { try { Stop-Transcript | Out-Null } catch { } }
     Read-Host 'Press Enter to close' | Out-Null
-    exit 1
+    exit 0
 }
 
 function Ask([string]$Question, [string]$Default = '') {
@@ -99,9 +122,18 @@ function Local-Version {
 
 function Update-CoopFiles {
     Say 'Checking for updates...' 'DarkGray'
-    $tmp = Join-Path $env:TEMP ('tpv-coop-' + [guid]::NewGuid().ToString('N'))
-    New-Item -ItemType Directory -Path $tmp -Force | Out-Null
+    $tmp = $null
     try {
+        # A scratch folder for the downloads: Windows' temp folder, or next to this file if that
+        # one can't be used.
+        try {
+            $tmp = Join-Path ([IO.Path]::GetTempPath()) ('tpv-coop-' + [guid]::NewGuid().ToString('N'))
+            New-Item -ItemType Directory -Path $tmp -Force | Out-Null
+        }
+        catch {
+            $tmp = Join-Path $LauncherDir ('tmp-' + [guid]::NewGuid().ToString('N'))
+            New-Item -ItemType Directory -Path $tmp -Force | Out-Null
+        }
         [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
         $ProgressPreference = 'SilentlyContinue'
         $mf = Join-Path $tmp 'manifest.json'
@@ -136,7 +168,7 @@ function Update-CoopFiles {
         return $false
     }
     finally {
-        Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
+        if ($tmp) { Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue }
     }
 }
 
@@ -378,6 +410,7 @@ $s = Load-Settings
 if (-not $NoUpdate -and -not $Updated -and $s.autoUpdate -ne $false) {
     if (Update-CoopFiles) {
         Say 'Restarting with the new launcher...' 'DarkGray'
+        if ($script:Logging) { try { Stop-Transcript | Out-Null } catch { } }
         & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $LauncherDir 'tpv-coop.ps1') $Mode -Updated
         exit $LASTEXITCODE
     }

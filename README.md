@@ -41,6 +41,9 @@ save, and start again with **Continue**.
 To try it alone, run **Try it on this PC (two windows).bat**. It opens a host window and a
 friend window on the same computer. Only the window you click into gets your keyboard.
 
+If something goes wrong, the window stays open and says what happened. The same text is saved
+in `launcher\last-run.txt`: send a screenshot or that file to whoever gave you the co-op files.
+
 ## Updates
 
 Every time you run one of the .bat files it checks for a newer version and installs it before the
