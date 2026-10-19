@@ -50,19 +50,21 @@ the internet on. New versions are posted at https://github.com/charliee1w/tpv-co
 
 ## Pick your character
 
-Everyone, the host too, can pick who they look like to everyone else: Tilin, Ella, Frida,
-a civilian (man, woman, boy or girl), Paco, Paca, Riot Paco, Perro Paco, ODIO, Bipedo,
-Bipeda, Cuadrupedo, the Oppressive or Love Machine.
+Everyone, the host too, can pick who they look like to everyone else: Tilin, Beta Tilin,
+Ella, Frida, a civilian (man, woman, boy or girl), Paco, Paca, Riot Paco, Perro Paco, ODIO,
+Bipedo, Bipeda, Cuadrupedo, the Oppressive or Love Machine.
 
 - The host and join .bat files ask for it. Press Enter to keep the one you had last time.
 - In game: **Options > Pink Valley co-op > Your character**. It changes right away.
-- Console: `tpvc_character ella` (or `paco`, `lovemachine`, and so on).
+- Console: `tpvc_character ella` (or `betatilin`, `paco`, `lovemachine`, and so on).
 
 It only changes how you look. You still play as Tilin, with the same speed, weapons, sounds
 and size, and you still see your own hands and HUD. The others see the character walk,
 attack, flinch and die with the mod's own sprites. Ella's sprites in the mod only face one
 way, so the add-on turns her turning-around frames into proper rotations; she has no
-walking animation, so she bobs as she walks.
+walking animation, so she bobs as she walks. Beta Tilin is Tilin in a green hoodie, with his
+own walk, aim and BANG! frames. He has no hurt or death sprites, so the add-on makes him flash
+red when he's hit and fall over when he dies.
 
 ## What the tag-along player can and can't do
 
@@ -167,7 +169,7 @@ The add-on was tested in real GZDoom 4.14.2 net games on one PC, with 2 and with
 - the host keeping its scripted speed after a respawn
 - with more than one friend: every friend landing next to the host on their own spot
 - with the enemy multiplier: map copies, and a scripted wave growing under its tag
-- characters: every character's frames exist in the mod, a guest dressed as Ella is drawn
+- characters: every character's frames exist, a guest dressed as Ella is drawn
   where they stand, the costume stays on the corpse and plays the death, and switching back
   to Tilin shows Tilin again
 

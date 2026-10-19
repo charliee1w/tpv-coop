@@ -279,8 +279,11 @@ class TPVC_Handler : StaticEventHandler
 
 	// One line per character: id | name | scale | stand | walk | attack | pain | death.
 	// Each frame list is "SPRT FRAMES", several separated by commas. Every sprite here is the
-	// mod's own, the way its actors use them (scale included). TPEL is Ella's turn-around frames
-	// set up as rotations in TEXTURES (her own sprites only face one way).
+	// mod's own, the way its actors use them (scale included), except two: TPEL is Ella's
+	// turn-around frames set up as rotations in TEXTURES (her own sprites only face one way), and
+	// TPBT is Beta Tilin, whose sprites are in this add-on (sprites/). An attack can have a second
+	// frame, shown while the player's gun flashes. Add new characters at the end: a costume
+	// remembers its character by number.
 	void BuildCharacters()
 	{
 		chId.Push("tilin"); chLabel.Push("Tilin"); chScale.Push(1); chOk.Push(1);
@@ -302,6 +305,9 @@ class TPVC_Handler : StaticEventHandler
 		AddCharacter("cuadrupedo|Cuadrupedo|0.4|CCBE A|CCBE BCDEFG|CCAT B|CCAS A|CCED ABCDEFGHI");
 		AddCharacter("oppressive|The Oppressive|0.5|OPRV A|OPRV BCDEFGHIJKLMN|OPVA A|OPRV C|OPDC ABCDEFG");
 		AddCharacter("lovemachine|Love Machine|0.3|LMCH A|LMCH ABCDEF|LMPA E|LMCH D|LVMD ABCDEFG,LVMT ABCDEF");
+		// Beta Tilin: E aims, F is the shot. G (hurt, tinted red) and H/I (tipping over, lying)
+		// were made for the add-on, since the beta sprites have no pain or death frames.
+		AddCharacter("betatilin|Beta Tilin|1|TPBT A|TPBT ABCD|TPBT EF|TPBT G|TPBT GHI");
 	}
 
 	void AddCharacter(String spec)
@@ -425,6 +431,7 @@ class TPVC_Handler : StaticEventHandler
 		cs.Angle = mo.Angle;
 		cs.FloorClip = mo.FloorClip;
 		cs.Scale = (chScale[c], chScale[c]);
+		cs.bBright = false;
 		if (mo.health <= 0)
 		{
 			if (cs.deathTic < 0) cs.deathTic = level.maptime;
@@ -433,14 +440,25 @@ class TPVC_Handler : StaticEventHandler
 		}
 		cs.deathTic = -1;
 		int role = ROLE_STAND;
+		bool flash = false;
 		State st = mo.CurState;
 		if (st)
 		{
+			// Melee is where Doom puts the player while their gun flashes (Tilin's own F frame).
+			flash = mo.InStateSequence(st, mo.FindState("Melee"));
 			if (mo.InStateSequence(st, mo.FindState("Pain"))) role = ROLE_PAIN;
-			else if (mo.InStateSequence(st, mo.FindState("Missile")) || mo.InStateSequence(st, mo.FindState("Melee"))) role = ROLE_ATTACK;
+			else if (flash || mo.InStateSequence(st, mo.FindState("Missile"))) role = ROLE_ATTACK;
 			else if (mo.InStateSequence(st, mo.FindState("See"))) role = ROLE_WALK;
 		}
-		ShowRole(cs, c, role, level.maptime / 4);
+		if (role == ROLE_ATTACK)
+		{
+			// The first attack frame, or the second (the shot) while the gun flashes, lit up the
+			// way Tilin's is. Characters with one attack frame show it either way.
+			bool shot = flash && roleLen[c * 5 + ROLE_ATTACK] > 1;
+			ShowRole(cs, c, role, shot ? 1 : 0);
+			cs.bBright = shot;
+		}
+		else ShowRole(cs, c, role, level.maptime / 4);
 	}
 
 	// Show frame k (wrapping) of a role; a character without that role uses its standing frame.
@@ -2013,14 +2031,15 @@ class TPVC_Costume : Actor
 	}
 }
 
-// Never spawned. Lists sprite names that only exist in this add-on's TEXTURES (Ella's turned
-// frames), so the engine knows them.
+// Never spawned. Lists sprite names that only exist in this add-on (Ella's turned frames in
+// TEXTURES, Beta Tilin in sprites/), so the engine knows them.
 class TPVC_SpriteNames : Actor
 {
 	States
 	{
 	Spawn:
 		TPEL ABC -1;
+		TPBT ABCDEFGHI -1;
 		Stop;
 	}
 }

@@ -27,11 +27,18 @@ def sha(path):
     with open(path, "rb") as f:
         return hashlib.sha256(f.read()).hexdigest().upper()
 
-# The pk3: every file in src/, fixed timestamps so the same source always gives the same bytes.
+# The pk3: every file in src/ and its folders (sprites/), fixed timestamps so the same source
+# always gives the same bytes.
 pk3 = os.path.join(root, "TPV_TagAlong_Coop.pk3")
+srcdir = os.path.join(root, "src")
+entries = []
+for folder, _, names in os.walk(srcdir):
+    for n in names:
+        full = os.path.join(folder, n)
+        entries.append((os.path.relpath(full, srcdir).replace(os.sep, "/"), full))
 with zipfile.ZipFile(pk3, "w", zipfile.ZIP_DEFLATED) as z:
-    for name in sorted(os.listdir(os.path.join(root, "src"))):
-        with open(os.path.join(root, "src", name), "rb") as f:
+    for name, full in sorted(entries):
+        with open(full, "rb") as f:
             data = f.read()
         info = zipfile.ZipInfo(name, date_time=(2026, 1, 1, 0, 0, 0))
         info.compress_type = zipfile.ZIP_DEFLATED

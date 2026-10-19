@@ -22,10 +22,10 @@ $Repo = 'charliee1w/tpv-coop'
 $CoopPk3 = Join-Path $Root 'TPV_TagAlong_Coop.pk3'
 
 $Characters = @(
-    @('tilin', 'Tilin'), @('ella', 'Ella'), @('frida', 'Frida'), @('man', 'Civilian (man)'),
-    @('woman', 'Civilian (woman)'), @('boy', 'Kid (boy)'), @('girl', 'Kid (girl)'), @('paco', 'Paco'),
-    @('paca', 'Paca'), @('riotpaco', 'Riot Paco'), @('perropaco', 'Perro Paco'), @('odio', 'ODIO'),
-    @('bipedo', 'Bipedo'), @('bipeda', 'Bipeda'), @('cuadrupedo', 'Cuadrupedo'),
+    @('tilin', 'Tilin'), @('betatilin', 'Beta Tilin'), @('ella', 'Ella'), @('frida', 'Frida'),
+    @('man', 'Civilian (man)'), @('woman', 'Civilian (woman)'), @('boy', 'Kid (boy)'), @('girl', 'Kid (girl)'),
+    @('paco', 'Paco'), @('paca', 'Paca'), @('riotpaco', 'Riot Paco'), @('perropaco', 'Perro Paco'),
+    @('odio', 'ODIO'), @('bipedo', 'Bipedo'), @('bipeda', 'Bipeda'), @('cuadrupedo', 'Cuadrupedo'),
     @('oppressive', 'The Oppressive'), @('lovemachine', 'Love Machine')
 )
 $Skills = @('SNOWFLAKE', 'RAGE QUIT', 'COMPETENT PEOPLE', 'COMPETENT AND A LITTLE TRY HARD PEOPLE', 'CORROSION', 'MORE CORROSION')

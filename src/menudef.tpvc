@@ -3,6 +3,7 @@
 OptionString "TPVC_Characters"
 {
 	"tilin", "Tilin"
+	"betatilin", "Beta Tilin"
 	"ella", "Ella"
 	"frida", "Frida"
 	"man", "Civilian (man)"

@@ -1,0 +1,10 @@
+**New character: Beta Tilin**
+- Tilin in his green hoodie. He walks, aims and fires (BANG!) with his own sprites, flashes red when he's hit and falls over when he dies.
+- Pick him in Host co-op.bat or Join co-op.bat (number 2 on the list), or in game: Options > Pink Valley co-op > Your character. Console: `tpvc_character betatilin`.
+- Like every character, he only changes how you look to the others. You still play as Tilin.
+
+Nothing else changed. If you already have v8, just run Host co-op.bat or Join co-op.bat with the internet on and it updates itself.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE_PINK_VALLEY - ENG.pk3 1.1 from ModDB.
+
+The Pink Valley is by Vamvilodon. This co-op add-on is an unofficial fan project by gore.
