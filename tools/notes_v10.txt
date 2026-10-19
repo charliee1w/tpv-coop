@@ -1,0 +1,9 @@
+**Ella's face on your HUD**
+- Pick Ella and your own HUD shows Ella's face instead of Tilin's, with all her looks: glancing around, getting hurt, grinning, bloodier as your health drops, and dead. The faces are TURI's, from Ella Over Tilin.
+- Only the player dressed as Ella gets it. Everyone else keeps Tilin's face, and single player is unchanged.
+
+If you already have v8 or v9, just run Host co-op.bat or Join co-op.bat with the internet on and it updates itself.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE_PINK_VALLEY - ENG.pk3 1.1 from ModDB.
+
+The Pink Valley is by Vamvilodon. Ella's HUD faces are by TURI. This co-op add-on is an unofficial fan project by gore.

@@ -388,6 +388,7 @@ class TPVC_Handler : StaticEventHandler
 			}
 			PlayerPawn mo = players[i].mo;
 			int c = WantedCharacter(i);
+			SetEllaFace(mo, c > 0 && c == FindCharacter("ella"));
 			if (c <= 0)
 			{
 				if (cs) { cs.Destroy(); costumes[i] = null; }
@@ -423,6 +424,16 @@ class TPVC_Handler : StaticEventHandler
 			let me = players[consoleplayer];
 			cs.bInvisible = me.camera == mo && !(me.cheats & CF_CHASECAM);
 		}
+	}
+
+	// Ella's HUD face: the add-on's copy of the mod's SBARINFO shows TURI's Ella faces (graphics/TPF*,
+	// from "Ella Over Tilin") instead of Tilin's to whoever holds TPVC_EllaFace. The HUD only ever shows the player it belongs to
+	// (or the one being spied on), so only players dressed as Ella get it.
+	void SetEllaFace(PlayerPawn mo, bool on)
+	{
+		bool has = mo.CountInv("TPVC_EllaFace") > 0;
+		if (on && !has) mo.GiveInventory("TPVC_EllaFace", 1);
+		else if (!on && has) mo.TakeInventory("TPVC_EllaFace", 1);
 	}
 
 	void Dress(TPVC_Costume cs, PlayerPawn mo)
@@ -1832,6 +1843,8 @@ class TPVC_Handler : StaticEventHandler
 				for (int k = fs; k < fe && cs; k++) if (cs.sprite == frS[k] && cs.frame == frF[k]) frameOk = true;
 				Check(dressed && frameOk, String.Format("a guest who picks Ella is drawn as Ella where they stand (costume %s, placed %d, frame %d)", cs ? "there" : "missing", dressed ? 1 : 0, frameOk ? 1 : 0));
 				tCostume = cs;
+				bool faces = TexMan.CheckForTexture("TPFST00", TexMan.Type_Any).IsValid() && TexMan.CheckForTexture("TPFDEAD0", TexMan.Type_Any).IsValid();
+				Check(g.CountInv("TPVC_EllaFace") > 0 && faces, String.Format("a guest dressed as Ella gets Ella's HUD face (faces %s)", faces ? "found" : "MISSING"));
 
 				// Monsters still see a player who looks like someone else.
 				let eye = Actor.Spawn("TPVC_Dummy", g.pos + (0, 0, 8));
@@ -1947,6 +1960,7 @@ class TPVC_Handler : StaticEventHandler
 			if (tCharIdx > 0)
 			{
 				Check(costumes[testGuest] == null && g.sprite != tnt1Sprite && !g.bInvisible, "switching back to Tilin shows Tilin again");
+				Check(g.CountInv("TPVC_EllaFace") == 0, "and gives back Tilin's HUD face");
 				forceChar[testGuest] = tCharSave;
 				if (tCostume) tCostume.Destroy();
 				tCostume = null;
@@ -2041,6 +2055,19 @@ class TPVC_SpriteNames : Actor
 		TPEL ABC -1;
 		TPBT ABCDEFGHI -1;
 		Stop;
+	}
+}
+
+// Held by players dressed as Ella: the add-on's SBARINFO then draws Ella's face in their HUD.
+// Does nothing else; the handler gives and takes it every tic as characters change.
+class TPVC_EllaFace : Inventory
+{
+	Default
+	{
+		Inventory.MaxAmount 1;
+		+INVENTORY.UNDROPPABLE
+		+INVENTORY.UNTOSSABLE
+		+INVENTORY.UNCLEARABLE
 	}
 }
 

@@ -1,0 +1,128 @@
+// The Pink Valley tag-along co-op: this is The Pink Valley 1.1's own SBARINFO, unchanged except
+// for the face. A player dressed as Ella (the add-on gives them TPVC_EllaFace) gets Ella's face
+// (graphics/TPF*: TURI's faces from "Ella Over Tilin"); everyone else, and single player, keep
+// Tilin's (STF).
+
+statusbar FULLSCREEN, fullscreenoffsets 
+{
+    ININVENTORY ISPLAYING, 1
+	{
+	ininventory TPVC_EllaFace
+	{
+		drawmugshot "TPF", 5, custom, 3, -34;
+	}
+	else
+	{
+		drawmugshot "STF", 5, 3, -34;
+	}
+	drawnumber 2147483647, HUDFONT_DOOM, untranslated, health, drawshadow, 82, -25;
+
+    drawimage armoricon, 20, -35, centerbottom;
+	drawnumber 2147483647, HUDFONT_DOOM, untranslated, armor, drawshadow, whennotzero, 82, -51;
+
+	drawimage ammoicon1, -14, -4, centerbottom;
+	drawnumber 2147483647, HUDFONT_DOOM, untranslated, ammo1, drawshadow, -25, -20;
+
+	usesammo
+	{
+		usessecondaryammo
+		{
+			drawimage ammoicon2, -14, -22, centerbottom;
+			drawnumber 2147483647, HUDFONT_DOOM, untranslated, ammo2, drawshadow, -25, -38;
+			inventorybarnotvisible
+			{
+				drawselectedinventory centerbottom, drawshadow, alwaysshowcounter, HUDFONT_DOOM, -14, -39, -26, -56, untranslated;
+			}
+		}
+		else 
+		{
+			inventorybarnotvisible
+			{
+				drawselectedinventory centerbottom, drawshadow, alwaysshowcounter, HUDFONT_DOOM, -14, -21, -26, -38, untranslated;
+			}
+		}
+	}
+	else 
+	{
+		inventorybarnotvisible
+		{
+			drawselectedinventory centerbottom, drawshadow, alwaysshowcounter, HUDFONT_DOOM, -14, -3, -26, -20, untranslated;
+		}
+	}
+
+	gamemode deathmatch
+	{
+		drawnumber 2147483647, HUDFONT_DOOM, untranslated, frags, drawshadow, -3, 1;
+	}
+	else
+	{
+		
+        DrawKeyBar 100, vertical, REVERSEROWS,AUTO, -20, 2,0,3,30;
+	}
+}
+}
+}
+
+statusbar normal // Standard Doom Status bar
+{
+	drawimage "STBAR", 0, 168;
+	drawimage "STTPRCNT", 90, 171;
+	drawimage "STTPRCNT", 221, 171;
+	drawnumber 3, HUDFONT_DOOM, untranslated, ammo1, 40, 171;
+	drawnumber 3, HUDFONT_DOOM, untranslated, health, 83, 171;
+	drawnumber 3, HUDFONT_DOOM, untranslated, armor, 212, 171;
+
+	//keys
+	drawswitchableimage keyslot 2 && 5, "nullimage", "STKEYS0", "STKEYS3", "STKEYS6", 239, 171;
+	drawswitchableimage keyslot 3 && 6, "nullimage", "STKEYS1", "STKEYS4", "STKEYS7", 239, 181;
+	drawswitchableimage keyslot 1 && 4, "nullimage", "STKEYS2", "STKEYS5", "STKEYS8", 239, 191;
+
+	drawnumber 3, INDEXFONT_DOOM, untranslated, ammo(SHOTAMMO), 285, 173;
+	drawnumber 3, INDEXFONT_DOOM, untranslated, ammo(METRAAMMO), 285, 179;
+	drawnumber 3, INDEXFONT_DOOM, untranslated, ammo(GRLAMMO), 285, 185;
+	drawnumber 3, INDEXFONT_DOOM, untranslated, ammo(FUEL), 285, 191;
+
+	drawnumber 3, INDEXFONT_DOOM, untranslated, AMMO(PISTOLAMMO), 312, 173;
+	drawnumber 3, INDEXFONT_DOOM, untranslated, AMMO(granade), 312, 179;
+	drawnumber 3, INDEXFONT_DOOM, untranslated, AMMO(MISSILFAMMO), 312, 185;
+	drawnumber 3, INDEXFONT_DOOM, untranslated, AMMO(GASS), 312, 191;
+	gamemode deathmatch, teamgame
+	{
+		drawnumber 2, HUDFONT_DOOM, untranslated, frags, 138, 171;
+	}
+	gamemode cooperative, singleplayer
+	{
+		drawimage "STARMS", 104, 168;
+		drawswitchableimage weaponslot 2, "STGNUM2", "STYSNUM2", 111, 172; 
+		drawswitchableimage weaponslot 3, "STGNUM3", "STYSNUM3", 123, 172;
+		drawswitchableimage weaponslot 4, "STGNUM4", "STYSNUM4", 135, 172;
+		drawswitchableimage weaponslot 5, "STGNUM5", "STYSNUM5", 111, 182;
+		drawswitchableimage weaponslot 6, "STGNUM6", "STYSNUM6", 123, 182;
+		drawswitchableimage weaponslot 7, "STGNUM7", "STYSNUM7", 135, 182;
+	}
+	gamemode cooperative, deathmatch, teamgame
+	{
+		drawimage translatable "STFBANY", 143, 169;
+	}
+	drawselectedinventory alternateonempty, INDEXFONT, 143, 168
+	{
+		ininventory TPVC_EllaFace
+		{
+			drawmugshot "TPF", 5, custom, 143, 168;
+		}
+		else
+		{
+			drawmugshot "STF", 5, 143, 168;
+		}
+	}
+}
+
+statusbar inventory // Standard bar overlay (ZDoom Addition)
+{
+	drawinventorybar Doom, 7, INDEXFONT, 50, 170;
+}
+
+statusbar inventoryfullscreen, fullscreenoffsets // ZDoom HUD overlay.
+{
+	drawinventorybar Doom, translucent, 7, INDEXFONT, -106+center, -31;
+}

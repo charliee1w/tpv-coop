@@ -66,6 +66,9 @@ walking animation, so she bobs as she walks. Beta Tilin is Tilin in a green hood
 own walk, aim and BANG! frames. He has no hurt or death sprites, so the add-on makes him flash
 red when he's hit and fall over when he dies.
 
+Pick Ella and your own HUD shows Ella's face instead of Tilin's (TURI's faces from Ella Over
+Tilin). Everyone else keeps Tilin's face.
+
 ## What the tag-along player can and can't do
 
 - **Can:** walk, run and fight with the same weapons the host has, including the Pib ticket.
@@ -146,6 +149,9 @@ Join co-op.bat asks and pick the same save. You can't load from the menu during 
   player.
 - Built and tested against The Pink Valley 1.1 (English). When Vamvilodon's next update comes
   out, the add-on's weapon list may need updating.
+- To show Ella's face, the add-on carries its own copy of the mod's status bar (SBARINFO), the
+  same as 1.1's apart from the face. If an update changes the mod's status bar, the add-on's copy
+  has to be updated too.
 
 ## How it was tested
 
@@ -170,8 +176,8 @@ The add-on was tested in real GZDoom 4.14.2 net games on one PC, with 2 and with
 - with more than one friend: every friend landing next to the host on their own spot
 - with the enemy multiplier: map copies, and a scripted wave growing under its tag
 - characters: every character's frames exist, a guest dressed as Ella is drawn
-  where they stand, the costume stays on the corpse and plays the death, and switching back
-  to Tilin shows Tilin again
+  where they stand and gets Ella's HUD face, the costume stays on the corpse and plays the
+  death, and switching back to Tilin shows Tilin again
 
 Every check passed on every map, with no desyncs, on GZDoom 4.14.2 and on UZDoom 5.0.3. A co-op
 save was also made, then loaded into a new two-player session, and every check passed there too.
@@ -185,5 +191,5 @@ It has been played over Radmin VPN, but nobody has played the whole story in co-
   character and where your game files are; delete it to start over.
 - Source: https://github.com/charliee1w/tpv-coop
 
-The Pink Valley is by Vamvilodon; all credit for the game goes to him. This co-op add-on is
-an unofficial fan project by gore.
+The Pink Valley is by Vamvilodon; all credit for the game goes to him. Ella's HUD faces are by
+TURI (from Ella Over Tilin). This co-op add-on is an unofficial fan project by gore.
