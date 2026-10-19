@@ -5,4 +5,6 @@ rem file and the launcher folder together. The last line ends with "exit" on pur
 rem update can rewrite this file while it runs.
 title The Pink Valley co-op - try it on this PC
 if not exist "%~dp0launcher\tpv-coop.ps1" (echo The launcher folder is missing. Unzip the whole "TPV co-op" folder again. & pause & exit /b 1)
+rem Let Windows PowerShell use its own module folders even when started from PowerShell 7.
+set "PSModulePath="
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0launcher\tpv-coop.ps1" try & exit /b

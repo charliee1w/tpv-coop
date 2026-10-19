@@ -2,6 +2,7 @@
 # manifest.json (every file the launcher keeps up to date, with its SHA-256).
 #   python tools/release.py 8                 build only, into tools/release_v8/
 #   python tools/release.py 8 --publish       also create GitHub release v8 with those files
+#   python tools/release.py 8 --publish --replace   remake release v8 (only before anyone downloaded it)
 # The notes for the release page come from tools/notes_v<version>.txt.
 import hashlib, json, os, shutil, subprocess, sys, zipfile
 
@@ -64,6 +65,9 @@ print("zip", os.path.getsize(zpath), "bytes, pk3", os.path.getsize(pk3), "bytes"
 if "--publish" in sys.argv:
     notes = os.path.join(root, "tools", "notes_%s.txt" % tag)
     assets = [os.path.join(out, a) for _, a in FILES] + [os.path.join(out, "manifest.json"), os.path.join(out, "TPV-co-op.zip")]
+    if "--replace" in sys.argv:
+        # Only before anyone has it: drop the release and its tag, then make it again.
+        subprocess.run(["gh", "release", "delete", tag, "--repo", REPO, "--yes", "--cleanup-tag"], check=False)
     cmd = ["gh", "release", "create", tag, "--repo", REPO, "--title", "TPV co-op " + tag, "--notes-file", notes] + assets
     subprocess.run(cmd, check=True)
     print("published", tag)

@@ -72,9 +72,18 @@ function Save-Settings($s) {
     try { $s | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $SettingsFile -Encoding UTF8 } catch { }
 }
 
+# .NET only, no modules: when this runs from a PowerShell 7 window, Windows PowerShell can be
+# handed the wrong module path and then Get-FileHash and friends don't exist.
+function Get-Sha256([string]$Path) {
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    $fs = [System.IO.File]::OpenRead($Path)
+    try { return ([BitConverter]::ToString($sha.ComputeHash($fs))).Replace('-', '') }
+    finally { $fs.Dispose(); $sha.Dispose() }
+}
+
 function Short-Hash([string]$Path) {
     if (-not (Test-Path -LiteralPath $Path)) { return '------' }
-    return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.Substring(0, 6)
+    return (Get-Sha256 $Path).Substring(0, 6)
 }
 
 function Local-Version {
@@ -102,7 +111,7 @@ function Update-CoopFiles {
         foreach ($f in @($m.files)) {
             $dest = Join-Path $Root ($f.path -replace '/', '\')
             $have = ''
-            if (Test-Path -LiteralPath $dest) { $have = (Get-FileHash -LiteralPath $dest -Algorithm SHA256).Hash }
+            if (Test-Path -LiteralPath $dest) { $have = Get-Sha256 $dest }
             if ($have -ne $f.sha256.ToUpper()) { $need += $f }
         }
         if ($need.Count -eq 0) { Say ("Up to date (version {0})." -f $m.version) 'DarkGray'; return $false }
@@ -111,7 +120,7 @@ function Update-CoopFiles {
         foreach ($f in $need) {
             $dl = Join-Path $tmp $f.asset
             Invoke-WebRequest -Uri ("https://github.com/{0}/releases/download/{1}/{2}" -f $Repo, $m.tag, $f.asset) -OutFile $dl -TimeoutSec 60 -UseBasicParsing
-            if ((Get-FileHash -LiteralPath $dl -Algorithm SHA256).Hash -ne $f.sha256.ToUpper()) { throw "the download of $($f.path) was damaged" }
+            if ((Get-Sha256 $dl) -ne $f.sha256.ToUpper()) { throw "the download of $($f.path) was damaged" }
             $dest = Join-Path $Root ($f.path -replace '/', '\')
             New-Item -ItemType Directory -Path (Split-Path -Parent $dest) -Force | Out-Null
             try { Copy-Item -LiteralPath $dl -Destination $dest -Force }
@@ -301,7 +310,16 @@ function Ask-Save($g, [string]$Intro) {
 function Get-MyAddresses {
     $list = @()
     $ips = @()
-    try { $ips = @(Get-NetIPAddress -AddressFamily IPv4 -ErrorAction Stop) } catch { $ips = @() }
+    try {
+        foreach ($nic in [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces()) {
+            if ($nic.OperationalStatus -ne 'Up') { continue }
+            foreach ($u in $nic.GetIPProperties().UnicastAddresses) {
+                if ($u.Address.AddressFamily -eq 'InterNetwork') {
+                    $ips += [pscustomobject]@{ IPAddress = $u.Address.ToString(); InterfaceAlias = $nic.Name + ' ' + $nic.Description }
+                }
+            }
+        }
+    } catch { $ips = @() }
     foreach ($ip in $ips) {
         $a = $ip.IPAddress
         $alias = $ip.InterfaceAlias
@@ -324,7 +342,10 @@ function Show-HostAddress {
         $best = $addrs[0]
         $copied = ''
         if (-not $env:TPVC_LAUNCHER_DRYRUN) {
-            try { Set-Clipboard -Value $best.Address; $copied = ' (copied: paste it to your friends)' } catch { }
+            try { Set-Clipboard -Value $best.Address; $copied = ' (copied: paste it to your friends)' }
+            catch {
+                try { Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Clipboard]::SetText($best.Address); $copied = ' (copied: paste it to your friends)' } catch { }
+            }
         }
         Say ("Your address for friends: {0}  [{1}]{2}" -f $best.Address, $best.Kind, $copied) 'Green'
         foreach ($o in $addrs | Select-Object -Skip 1) { Say ("  also {0}  [{1}]" -f $o.Address, $o.Kind) 'DarkGray' }
