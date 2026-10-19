@@ -1,0 +1,16 @@
+/*
+!/.gitignore
+!/README.md
+!/build.py
+!/Host co-op.bat
+!/Join co-op.bat
+!/Try it on this PC (two windows).bat
+!/src/
+!/launcher/
+/launcher/*
+!/launcher/tpv-coop.ps1
+!/launcher/version.txt
+!/tools/
+/tools/*
+!/tools/release.py
+!/tools/notes_*.txt

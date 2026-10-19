@@ -1,0 +1,21 @@
+// The Pink Valley - tag-along co-op (unofficial add-on). Load after THE_PINK_VALLEY - ENG.pk3.
+gameinfo
+{
+	addeventhandlers = "TPVC_Handler"
+}
+
+// GZDoom starts every net game on MAP01 (Doom 2's Entryway, which The Pink Valley doesn't use).
+// The add-on moves everyone to A_NEW_DAY on the first tic. Giving MAP01 a cluster with no
+// story text stops Doom 2's "You have entered deeply into the infested starport" screen
+// from showing on the way out. Single player never visits MAP01.
+map MAP01 "THE PINK VALLEY"
+{
+	cluster = 98
+	next = "A_NEW_DAY"
+	sky1 = "SKY1"
+	nointermission
+}
+
+cluster 98
+{
+}

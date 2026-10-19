@@ -1,0 +1,94 @@
+// The Pink Valley tag-along co-op: Ella as a player character.
+// Her sprites only face the camera, but SHEA A-I are her turning from her back to her front,
+// so they make the rotations of a new sprite, TPEL. These only point at the mod's own
+// graphics; nothing is copied. Frames B and C are the walking bob (raised a few pixels).
+
+Sprite "TPELA1", 205, 180
+{
+	Offset 107, 180
+	Patch "SHEAH0", 0, 0
+}
+
+Sprite "TPELA2A8", 205, 180
+{
+	Offset 107, 180
+	Patch "SHEAE0", 0, 0
+}
+
+Sprite "TPELA3A7", 205, 180
+{
+	Offset 107, 180
+	Patch "SHEAC0", 0, 0
+}
+
+Sprite "TPELA4A6", 205, 180
+{
+	Offset 107, 180
+	Patch "SHEAB0", 0, 0
+}
+
+Sprite "TPELA5", 205, 180
+{
+	Offset 107, 180
+	Patch "SHEAA0", 0, 0
+}
+
+Sprite "TPELB1", 205, 180
+{
+	Offset 107, 186
+	Patch "SHEAI0", 0, 0
+}
+
+Sprite "TPELB2B8", 205, 180
+{
+	Offset 107, 186
+	Patch "SHEAE0", 0, 0
+}
+
+Sprite "TPELB3B7", 205, 180
+{
+	Offset 107, 186
+	Patch "SHEAC0", 0, 0
+}
+
+Sprite "TPELB4B6", 205, 180
+{
+	Offset 107, 186
+	Patch "SHEAB0", 0, 0
+}
+
+Sprite "TPELB5", 205, 180
+{
+	Offset 107, 186
+	Patch "SHEAA0", 0, 0
+}
+
+Sprite "TPELC1", 205, 180
+{
+	Offset 107, 186
+	Patch "SHEAH0", 0, 0
+}
+
+Sprite "TPELC2C8", 205, 180
+{
+	Offset 107, 186
+	Patch "SHEAE0", 0, 0
+}
+
+Sprite "TPELC3C7", 205, 180
+{
+	Offset 107, 186
+	Patch "SHEAC0", 0, 0
+}
+
+Sprite "TPELC4C6", 205, 180
+{
+	Offset 107, 186
+	Patch "SHEAB0", 0, 0
+}
+
+Sprite "TPELC5", 205, 180
+{
+	Offset 107, 186
+	Patch "SHEAA0", 0, 0
+}

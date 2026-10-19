@@ -1,0 +1,44 @@
+// The Pink Valley tag-along co-op: Options > Pink Valley co-op.
+
+OptionString "TPVC_Characters"
+{
+	"tilin", "Tilin"
+	"ella", "Ella"
+	"frida", "Frida"
+	"man", "Civilian (man)"
+	"woman", "Civilian (woman)"
+	"boy", "Kid (boy)"
+	"girl", "Kid (girl)"
+	"paco", "Paco"
+	"paca", "Paca"
+	"riotpaco", "Riot Paco"
+	"perropaco", "Perro Paco"
+	"odio", "ODIO"
+	"bipedo", "Bipedo"
+	"bipeda", "Bipeda"
+	"cuadrupedo", "Cuadrupedo"
+	"oppressive", "The Oppressive"
+	"lovemachine", "Love Machine"
+}
+
+AddOptionMenu "OptionsMenu"
+{
+	Submenu "Pink Valley co-op", "TPVC_Options"
+}
+
+// UZDoom and newer GZDoom open a shorter Options menu by default; put it there too.
+AddOptionMenu "OptionsMenuSimple"
+{
+	Submenu "Pink Valley co-op", "TPVC_Options"
+}
+
+OptionMenu "TPVC_Options"
+{
+	Title "PINK VALLEY CO-OP"
+	StaticText " "
+	Option "Your character", "tpvc_character", "TPVC_Characters"
+	StaticText "What everyone else sees you as in co-op.", 1
+	StaticText "You keep Tilin's weapons and moves.", 1
+	StaticText " "
+	Control "Warp to the host", "netevent tpvc_warp"
+}

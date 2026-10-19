@@ -1,0 +1,16 @@
+**Easier to play together**
+- Join remembers who you've played with: pick them from a list instead of typing an address.
+- Host shows your address (Radmin VPN, Tailscale, ZeroTier or your home network) and copies it so you can paste it to friends.
+- UZDoom: the host opens 4 spots and clicks Start Game when everyone's in. The enemy multiplier defaults to one per player who actually joined.
+- Continue: pick a save from a list. On UZDoom everyone else loads the same save automatically.
+- Updates install themselves every time you start, so everyone always has the same files. The launcher shows a files code to compare if a join fails.
+- The launcher finds UZDoom, the IWAD and The Pink Valley by itself, or asks once and remembers.
+
+**Also in this version (from v7)**
+- Fixed: on Home, the family room scene never started when playing with friends on UZDoom.
+- Fixed: on UZDoom, things maps spawn at the start were doubled for every friend, and Melancolia's ending walk could leave the host behind.
+- Friends trying a locked door on Home count toward the 3 tries the story wants.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE_PINK_VALLEY - ENG.pk3 1.1 from ModDB.
+
+The Pink Valley is by Vamvilodon. This co-op add-on is an unofficial fan project by gore.

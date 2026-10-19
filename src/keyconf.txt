@@ -1,0 +1,3 @@
+addkeysection "Pink Valley co-op" TPVCoopKeys
+addmenukey "Warp to the host (host: pull friends over)" "netevent tpvc_warp"
+defaultbind J "netevent tpvc_warp"
