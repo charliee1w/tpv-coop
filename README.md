@@ -61,6 +61,9 @@ Bipedo, Bipeda, Cuadrupedo, the Oppressive or Love Machine.
 - In game: **Options > Pink Valley co-op > Your character**. It changes right away.
 - Console: `tpvc_character ella` (or `betatilin`, `paco`, `lovemachine`, and so on).
 
+Want to add your own character? See
+[CHARACTERS.md](https://github.com/charliee1w/tpv-coop/blob/main/CHARACTERS.md).
+
 It only changes how you look. You still play as Tilin, with the same speed, weapons, sounds
 and size, and you still see your own hands and HUD. The others see the character walk,
 attack, flinch and die with the mod's own sprites. Ella's sprites in the mod only face one

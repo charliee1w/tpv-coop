@@ -260,9 +260,11 @@ function Ask-Character($s, [string]$Who = 'your') {
     Say ''
     if ($Who -eq 'your') { Say 'Pick your character: what everyone else sees you as. You still play as Tilin.' }
     else { Say "Pick the second window's character." }
-    for ($i = 0; $i -lt 6; $i++) {
+    # Three columns, as many rows as the list needs.
+    $rows = [int][Math]::Ceiling($Characters.Count / 3)
+    for ($i = 0; $i -lt $rows; $i++) {
         $line = ''
-        foreach ($col in @($i, ($i + 6), ($i + 12))) {
+        foreach ($col in @($i, ($i + $rows), ($i + 2 * $rows))) {
             if ($col -lt $Characters.Count) { $line += ('  {0,2} {1,-18}' -f ($col + 1), $Characters[$col][1]) }
         }
         Say $line
