@@ -68,9 +68,9 @@ It only changes how you look. You still play as Tilin, with the same speed, weap
 and size, and you still see your own hands and HUD. The others see the character walk,
 attack, flinch and die with the mod's own sprites. Ella's sprites in the mod only face one
 way, so the add-on turns her turning-around frames into proper rotations; she has no
-walking animation, so she bobs as she walks. Beta Tilin is Tilin in a green hoodie, with his
-own walk, aim, BANG! and death frames. He has no hurt sprite, so the add-on makes him flash red
-when he's hit.
+walking animation, so she bobs as she walks. Beta Tilin is Tilin in a green hoodie, drawn by
+TURI: his walk, aim, BANG! and death frames are all TURI's. He has no hurt sprite, so the add-on
+makes him flash red when he's hit.
 
 Pick Ella and your own HUD shows Ella's face instead of Tilin's (TURI's faces from Ella Over
 Tilin). Everyone else keeps Tilin's face.
@@ -197,5 +197,9 @@ It has been played over Radmin VPN, but nobody has played the whole story in co-
   character and where your game files are; delete it to start over.
 - Source: https://github.com/charliee1w/tpv-coop
 
-The Pink Valley is by Vamvilodon; all credit for the game goes to him. Ella's HUD faces are by
-TURI (from Ella Over Tilin). This co-op add-on is an unofficial fan project by gore.
+The Pink Valley is by Vamvilodon; all credit for the game goes to him.
+
+TURI made the Beta Tilin character sprites (walking, aiming, the BANG! shot and his death) and
+Ella's HUD faces (from his Ella Over Tilin). Thank you, TURI.
+
+This co-op add-on is an unofficial fan project by gore.

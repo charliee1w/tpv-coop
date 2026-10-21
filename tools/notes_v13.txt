@@ -1,0 +1,8 @@
+**Credits**
+- TURI made the Beta Tilin character sprites (walking, aiming, the BANG! shot and his death) and Ella's HUD faces (from his Ella Over Tilin). The README now says so in full. Thank you, TURI.
+
+Nothing in the game changed: the files code is the same as v12, so v12 and v13 players can play together. Run Host co-op.bat or Join co-op.bat with the internet on and it updates itself.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE_PINK_VALLEY - ENG.pk3 1.1 from ModDB.
+
+The Pink Valley is by Vamvilodon. Beta Tilin's sprites and Ella's HUD faces are by TURI. This co-op add-on is an unofficial fan project by gore.
