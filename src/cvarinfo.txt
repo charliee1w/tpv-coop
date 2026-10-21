@@ -6,3 +6,4 @@ server bool tpvc_debug = false;              // print what the co-op layer does 
 
 // Per player (each player sets their own; everyone else sees it).
 user string tpvc_character = "tilin";         // what everyone else sees you as: tilin, ella, frida, paco, ...
+user bool tpvc_weaponicons = true;            // show a picture of the weapon each friend holds over their head (only on your screen)

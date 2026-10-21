@@ -1,0 +1,11 @@
+**See what everyone is holding**
+- A small picture of the weapon each friend is holding now floats over their head, so you can see who has what. You don't see one over your own head.
+- Every weapon has one: axe, chainsaw, knife, hammer, revolver, both shotguns, SMG, tooth launcher, Frida launcher, flamethrower, gas, LZS, Miniyo, Monono, the Pib card and the key boxes.
+- The LZS picture was redrawn by Baican (the mod has none for it). Idea by Baozodaxia_ZAQ. Thank you both.
+- Don't want them? Options > Pink Valley co-op > Friends' weapons over their heads, or `tpvc_weaponicons 0` in the console. That only changes your own screen.
+
+Already have the co-op files? Just run Host co-op.bat or Join co-op.bat with the internet on and it updates itself. Everyone in a game needs the same version.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE_PINK_VALLEY - ENG.pk3 1.1 from ModDB.
+
+The Pink Valley is by Vamvilodon. Beta Tilin's sprites and Ella's HUD faces are by TURI. LZS picture by Baican. This co-op add-on is an unofficial fan project by gore.

@@ -41,5 +41,8 @@ OptionMenu "TPVC_Options"
 	StaticText "What everyone else sees you as in co-op.", 1
 	StaticText "You keep Tilin's weapons and moves.", 1
 	StaticText " "
+	Option "Friends' weapons over their heads", "tpvc_weaponicons", "OnOff"
+	StaticText "A picture of the weapon each friend is holding.", 1
+	StaticText " "
 	Control "Warp to the host", "netevent tpvc_warp"
 }

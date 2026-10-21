@@ -64,6 +64,16 @@ Bipedo, Bipeda, Cuadrupedo, the Oppressive or Love Machine.
 Want to add your own character? See
 [CHARACTERS.md](https://github.com/charliee1w/tpv-coop/blob/main/CHARACTERS.md).
 
+## See what everyone is holding
+
+A small picture of the weapon each friend is holding floats over their head, so you can see who
+has the shotgun, the flamethrower or the Pib card. You don't see one over your own head. Turn them
+off in **Options > Pink Valley co-op > Friends' weapons over their heads** (or `tpvc_weaponicons 0`
+in the console); that only changes your own screen.
+
+The pictures are the weapons' own pickup pictures. The LZS has none in the mod, so its picture was
+redrawn by Baican, and the Pib card got a small one of its own.
+
 It only changes how you look. You still play as Tilin, with the same speed, weapons, sounds
 and size, and you still see your own hands and HUD. The others see the character walk,
 attack, flinch and die with the mod's own sprites. Ella's sprites in the mod only face one
@@ -201,5 +211,8 @@ The Pink Valley is by Vamvilodon; all credit for the game goes to him.
 
 TURI made the Beta Tilin character sprites (walking, aiming, the BANG! shot and his death) and
 Ella's HUD faces (from his Ella Over Tilin). Thank you, TURI.
+
+Baican redrew the LZS for the weapon pictures over players' heads, and Baozodaxia_ZAQ came up
+with the idea. Thank you both.
 
 This co-op add-on is an unofficial fan project by gore.

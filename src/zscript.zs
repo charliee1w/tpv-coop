@@ -66,6 +66,13 @@ class TPVC_Handler : StaticEventHandler
 	Array<int> frF;
 	Array<String> frName;		// "PEATA", for the self-test's frame check
 	Array<TPVC_Costume> costumes;	// per player: the actor drawn in their place, or null
+	Array<double> chTop;		// per character: how high its standing picture reaches (0: not known)
+
+	// Weapon icons (see UpdateWeaponIcons): weapon class -> frame of sprite TPWI.
+	Array<Name> wiClass;
+	Array<int> wiFrame;
+	Array<TPVC_WeaponIcon> icons;	// per player: the picture over their head, or null
+	int wiSprite;
 	Array<int> forceChar;		// per player: self-test override, -1 = use the player's cvar
 	Array<String> wantStr;		// per player: last cvar value seen, and what it matched
 	Array<int> wantIdx;
@@ -189,6 +196,7 @@ class TPVC_Handler : StaticEventHandler
 			lastArmor.Push(0);
 			resyncP.Push(1);
 			costumes.Push(null);
+			icons.Push(null);
 			forceChar.Push(-1);
 			wantStr.Push("");
 			wantIdx.Push(0);
@@ -271,6 +279,7 @@ class TPVC_Handler : StaticEventHandler
 		playSprite = Actor.GetSpriteIndex('PLAY');
 		tnt1Sprite = Actor.GetSpriteIndex('TNT1');
 		if (modPresent) BuildCharacters();
+		if (modPresent) BuildWeaponIcons();
 	}
 
 	// ------------------------------------------------------------------------
@@ -286,7 +295,7 @@ class TPVC_Handler : StaticEventHandler
 	// remembers its character by number.
 	void BuildCharacters()
 	{
-		chId.Push("tilin"); chLabel.Push("Tilin"); chScale.Push(1); chOk.Push(1);
+		chId.Push("tilin"); chLabel.Push("Tilin"); chScale.Push(1); chOk.Push(1); chTop.Push(0);
 		for (int r = 0; r < 5; r++) { roleStart.Push(0); roleLen.Push(0); }
 
 		AddCharacter("ella|Ella|0.4|TPEL A|TPEL ABAC|TPEL A|SHEA L|SHEA WXYZ,SHEB ABCDEFGHIJKLM");
@@ -347,6 +356,119 @@ class TPVC_Handler : StaticEventHandler
 		}
 		if (roleLen[roleLen.Size() - 5] == 0) ok = false;	// needs a standing frame at least
 		chOk.Push(ok ? 1 : 0);
+
+		// How high the standing picture reaches: its top offset times the scale (for the weapon
+		// icon over the head).
+		double top = 0;
+		int st = roleStart[roleStart.Size() - 5];
+		if (ok && st < frName.Size())
+		{
+			TextureID t = TexMan.CheckForTexture(frName[st] .. "1", TexMan.Type_Sprite);
+			if (!t.IsValid()) t = TexMan.CheckForTexture(frName[st] .. "0", TexMan.Type_Sprite);
+			if (t.IsValid())
+			{
+				Vector2 off = TexMan.GetScaledOffset(t);
+				top = off.y * chScale[chScale.Size() - 1];
+			}
+		}
+		chTop.Push(top);
+	}
+
+	// ------------------------------------------------------------------------
+	// Weapon icons
+	// ------------------------------------------------------------------------
+
+	// A picture of the weapon each player is holding floats over their head, so friends can see
+	// what everyone has (idea by Baozodaxia_ZAQ). The pictures are sprite TPWI in textures.tpvc:
+	// the weapons' own pickup pictures, cut and scaled, plus the LZS (redrawn by Baican) and the
+	// Pib card, which have no picture of their own in the mod. Weapons not listed (Tilin's empty
+	// hands in story scenes, BLOCKWEA) show nothing.
+	void BuildWeaponIcons()
+	{
+		wiSprite = Actor.GetSpriteIndex('TPWI');
+		AddIcon('SAWOFF', "A");
+		AddIcon('CUCHILLO', "B");
+		AddIcon('MARTILLO', "C");
+		AddIcon('REVOLVER', "D");
+		AddIcon('HACHA', "E");
+		AddIcon('ESCOPETAYPISTOLA', "F");
+		AddIcon('SSHOTGUN', "G");
+		AddIcon('LANZADIENTES', "H");
+		AddIcon('METRALLETA', "I");
+		AddIcon('TARRO', "J");
+		AddIcon('LANZAF', "K");
+		AddIcon('LANZALLAMAS', "L");
+		AddIcon('LZS', "M");
+		AddIcon('RECOLECTOR', "M");		// the LZS's alt fire switches to it
+		AddIcon('MINIYO', "N");
+		AddIcon('MONONODESNUTRIDO', "O");
+		AddIcon('MONONOFULL', "O");
+		AddIcon('PIBTAR', "P");
+		AddIcon('CAJALLAVER', "Q");
+		AddIcon('CAJALLAVEA', "R");
+		AddIcon('CAJALLAVEB', "S");
+		AddIcon('CAJALLAVEESPECIAL', "S");
+	}
+
+	void AddIcon(Name cls, String letter)
+	{
+		wiClass.Push(cls);
+		wiFrame.Push(letter.ByteAt(0) - 65);
+	}
+
+	int IconFrame(Weapon w)
+	{
+		if (!w || wiSprite < 0) return -1;
+		Name cls = w.GetClassName();
+		for (int k = 0; k < wiClass.Size(); k++) if (wiClass[k] == cls) return wiFrame[k];
+		return -1;
+	}
+
+	// How high over a player's feet their picture reaches: Tilin's height, or the character's.
+	double HeadTop(int i, PlayerPawn mo)
+	{
+		int c = WantedCharacter(i);
+		if (c > 0 && c < chTop.Size() && chTop[c] > 0)
+		{
+			double top = chTop[c];
+			if (mo.player && mo.player.crouchfactor > 0) top *= mo.player.crouchfactor;
+			return top;
+		}
+		return mo.Height;	// already lower while crouching
+	}
+
+	void UpdateWeaponIcons()
+	{
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			let ic = icons[i];
+			PlayerPawn mo = playeringame[i] ? players[i].mo : null;
+			int fr = (mo && mo.health > 0) ? IconFrame(players[i].ReadyWeapon) : -1;
+			if (fr < 0)
+			{
+				if (ic) { ic.Destroy(); icons[i] = null; }
+				continue;
+			}
+			double dz = HeadTop(i, mo) + 6;
+			if (!ic)
+			{
+				ic = TPVC_WeaponIcon(Actor.Spawn("TPVC_WeaponIcon", mo.pos + (0, 0, dz), NO_REPLACE));
+				if (!ic) continue;
+				icons[i] = ic;
+			}
+			else ic.SetOrigin(mo.pos + (0, 0, dz), true);
+			ic.Prev = mo.Prev + (0, 0, dz);	// move as smoothly as the player
+			ic.sprite = wiSprite;
+			ic.frame = fr;
+
+			// Each screen decides for itself: never over your own head, and not at all if you
+			// turned them off. (Only how this screen draws it; nothing the game plays by.)
+			let me = players[consoleplayer];
+			bool show = true;
+			let cv = CVar.GetCVar('tpvc_weaponicons', me);
+			if (cv) show = cv.GetBool();
+			ic.bInvisible = !show || (me.camera == mo && !(me.cheats & CF_CHASECAM));
+		}
 	}
 
 	// Which character player i wants: their tpvc_character cvar (id or name, any case).
@@ -558,11 +680,14 @@ class TPVC_Handler : StaticEventHandler
 		// Character costumes: a new map starts without any (UpdateCharacters makes them). A save
 		// has the old ones in it; drop those that belong to a living player so they aren't doubled.
 		for (int i = 0; i < MAXPLAYERS; i++) costumes[i] = null;
+		for (int i = 0; i < MAXPLAYERS; i++) icons[i] = null;
 		if (e.IsSaveGame)
 		{
 			Array<Actor> old;
 			let cit = ThinkerIterator.Create("TPVC_Costume");
 			for (let a = TPVC_Costume(cit.Next()); a; a = TPVC_Costume(cit.Next())) if (!a.orphan) old.Push(a);
+			let iit = ThinkerIterator.Create("TPVC_WeaponIcon");
+			for (let a = TPVC_WeaponIcon(iit.Next()); a; a = TPVC_WeaponIcon(iit.Next())) old.Push(a);
 			for (int k = 0; k < old.Size(); k++) old[k].Destroy();
 		}
 
@@ -640,6 +765,7 @@ class TPVC_Handler : StaticEventHandler
 		int i = e.PlayerNumber;
 		if (i < 0 || i >= MAXPLAYERS || i >= costumes.Size()) return;
 		if (costumes[i]) { costumes[i].Destroy(); costumes[i] = null; }
+		if (icons[i]) { icons[i].Destroy(); icons[i] = null; }
 	}
 
 	override void PlayerEntered(PlayerEvent e)
@@ -932,6 +1058,7 @@ class TPVC_Handler : StaticEventHandler
 
 		// Whoever picked a character gets drawn as it.
 		UpdateCharacters();
+		UpdateWeaponIcons();
 
 		if (testStage > 0) SelfTestStep();
 	}
@@ -1737,6 +1864,14 @@ class TPVC_Handler : StaticEventHandler
 			int nOk = 0;
 			for (int c = 1; c < chId.Size(); c++) if (chOk[c]) nOk++;
 			Check(chId.Size() > 1 && nOk == chId.Size() - 1, String.Format("all %d characters are available (%d found)", chId.Size() - 1, nOk));
+			int iconPics = 0;
+			int iconWeapons = 0;
+			for (int k = 0; k < wiFrame.Size(); k++)
+			{
+				if (TexMan.CheckForTexture(String.Format("TPWI%c0", 65 + wiFrame[k]), TexMan.Type_Sprite).IsValid()) iconPics++;
+				if (ClassByName(wiClass[k]) != null) iconWeapons++;
+			}
+			Check(wiSprite >= 0 && iconPics == wiFrame.Size() && iconWeapons == wiClass.Size(), String.Format("every weapon icon has its picture and weapon (%d pictures, %d weapons of %d)", iconPics, iconWeapons, wiClass.Size()));
 			int missing = 0;
 			String firstMissing = "";
 			for (int k = 0; k < frName.Size(); k++)
@@ -1845,6 +1980,14 @@ class TPVC_Handler : StaticEventHandler
 				tCostume = cs;
 				bool faces = TexMan.CheckForTexture("TPFST00", TexMan.Type_Any).IsValid() && TexMan.CheckForTexture("TPFDEAD0", TexMan.Type_Any).IsValid();
 				Check(g.CountInv("TPVC_EllaFace") > 0 && faces, String.Format("a guest dressed as Ella gets Ella's HUD face (faces %s)", faces ? "found" : "MISSING"));
+
+				// The picture of the guest's weapon floats over their (Ella's) head, or there is
+				// none if what they hold has no picture.
+				let gw = players[testGuest].ReadyWeapon;
+				int want = IconFrame(gw);
+				let ic = icons[testGuest];
+				bool icOk = want < 0 ? ic == null : (ic != null && ic.sprite == wiSprite && ic.frame == want && ic.pos.z > g.pos.z + 40);
+				Check(icOk, String.Format("the guest's weapon icon matches what they hold (%s, icon %s)", gw ? String.Format("%s", gw.GetClassName()) : "nothing", ic ? "shown" : "none"));
 
 				// Monsters still see a player who looks like someone else.
 				let eye = Actor.Spawn("TPVC_Dummy", g.pos + (0, 0, 8));
@@ -2045,8 +2188,31 @@ class TPVC_Costume : Actor
 	}
 }
 
-// Never spawned. Lists sprite names that only exist in this add-on (Ella's turned frames in
-// TEXTURES, Beta Tilin in sprites/), so the engine knows them.
+// The picture of a player's weapon over their head (see UpdateWeaponIcons). No body of its own;
+// the handler moves it with the player every tic.
+class TPVC_WeaponIcon : Actor
+{
+	Default
+	{
+		+NOINTERACTION
+		+NOBLOCKMAP
+		+NOGRAVITY
+		+DONTSPLASH
+		+NOTONAUTOMAP
+		+NOTELEPORT
+		+NOTARGET
+		+BRIGHT
+	}
+	States
+	{
+	Spawn:
+		TNT1 A -1;
+		Stop;
+	}
+}
+
+// Never spawned. Lists sprite names that only exist in this add-on (Ella's turned frames and the
+// weapon icons in TEXTURES, Beta Tilin in sprites/), so the engine knows them.
 class TPVC_SpriteNames : Actor
 {
 	States
@@ -2054,6 +2220,7 @@ class TPVC_SpriteNames : Actor
 	Spawn:
 		TPEL ABC -1;
 		TPBT ABCDEFGHIJK -1;
+		TPWI ABCDEFGHIJKLMNOPQRS -1;
 		Stop;
 	}
 }
