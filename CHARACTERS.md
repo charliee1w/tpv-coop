@@ -39,13 +39,14 @@ Rules:
   front, front diagonal, side, back diagonal and back. Draw the side and the diagonals facing the
   **left** of the picture. The game mirrors them for the other side.
 
-Beta Tilin is a full example: 4 walking frames from 5 angles, an attack and a BANG! frame.
+Beta Tilin is a full example: 4 walking frames from 5 angles, an attack, a BANG! frame and a
+4-frame death.
 See the pictures in [src/sprites](https://github.com/charliee1w/tpv-coop/tree/main/src/sprites).
 
 **If you're sending them to gore, you're done.** Give the files names that say what they are (for
 example `walk1_front.png`, `walk1_side.png`, `attack.png`, `dead.png`), zip them and send them.
-If someone else drew them, say who, so they get credit. If there's no hurt or dying picture, gore
-can make them like Beta Tilin's (a red flash when hit, falling over when he dies).
+If someone else drew them, say who, so they get credit. If there's no hurt picture, gore can make
+one like Beta Tilin's (a red flash when hit).
 
 ## Part 2: adding it yourself
 

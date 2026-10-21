@@ -1,0 +1,12 @@
+**Beta Tilin's death**
+- Beta Tilin now dies with his own frames: shot in the head, then down on the floor. It replaces the falling-over the add-on made for him before.
+
+**Also**
+- The character list in Host/Join can now hold more than 18 characters.
+- Want to add your own character? See [CHARACTERS.md](https://github.com/charliee1w/tpv-coop/blob/main/CHARACTERS.md).
+
+Already have the co-op files? Just run Host co-op.bat or Join co-op.bat with the internet on and it updates itself. If your .bat closed right away before, download TPV-co-op.zip below once.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE_PINK_VALLEY - ENG.pk3 1.1 from ModDB.
+
+The Pink Valley is by Vamvilodon. Ella's HUD faces are by TURI. This co-op add-on is an unofficial fan project by gore.

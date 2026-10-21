@@ -69,8 +69,8 @@ and size, and you still see your own hands and HUD. The others see the character
 attack, flinch and die with the mod's own sprites. Ella's sprites in the mod only face one
 way, so the add-on turns her turning-around frames into proper rotations; she has no
 walking animation, so she bobs as she walks. Beta Tilin is Tilin in a green hoodie, with his
-own walk, aim and BANG! frames. He has no hurt or death sprites, so the add-on makes him flash
-red when he's hit and fall over when he dies.
+own walk, aim, BANG! and death frames. He has no hurt sprite, so the add-on makes him flash red
+when he's hit.
 
 Pick Ella and your own HUD shows Ella's face instead of Tilin's (TURI's faces from Ella Over
 Tilin). Everyone else keeps Tilin's face.

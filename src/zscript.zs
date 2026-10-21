@@ -305,9 +305,9 @@ class TPVC_Handler : StaticEventHandler
 		AddCharacter("cuadrupedo|Cuadrupedo|0.4|CCBE A|CCBE BCDEFG|CCAT B|CCAS A|CCED ABCDEFGHI");
 		AddCharacter("oppressive|The Oppressive|0.5|OPRV A|OPRV BCDEFGHIJKLMN|OPVA A|OPRV C|OPDC ABCDEFG");
 		AddCharacter("lovemachine|Love Machine|0.3|LMCH A|LMCH ABCDEF|LMPA E|LMCH D|LVMD ABCDEFG,LVMT ABCDEF");
-		// Beta Tilin: E aims, F is the shot. G (hurt, tinted red) and H/I (tipping over, lying)
-		// were made for the add-on, since the beta sprites have no pain or death frames.
-		AddCharacter("betatilin|Beta Tilin|1|TPBT A|TPBT ABCD|TPBT EF|TPBT G|TPBT GHI");
+		// Beta Tilin: E aims, F is the shot, H-K his death (shot in the head, falls). G (hurt,
+		// tinted red) was made for the add-on, since the beta sprites have no pain frame.
+		AddCharacter("betatilin|Beta Tilin|1|TPBT A|TPBT ABCD|TPBT EF|TPBT G|TPBT HIJK");
 	}
 
 	void AddCharacter(String spec)
@@ -2053,7 +2053,7 @@ class TPVC_SpriteNames : Actor
 	{
 	Spawn:
 		TPEL ABC -1;
-		TPBT ABCDEFGHI -1;
+		TPBT ABCDEFGHIJK -1;
 		Stop;
 	}
 }
