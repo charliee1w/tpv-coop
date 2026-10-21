@@ -71,8 +71,8 @@ has the shotgun, the flamethrower or the Pib card. You don't see one over your o
 off in **Options > Pink Valley co-op > Friends' weapons over their heads** (or `tpvc_weaponicons 0`
 in the console); that only changes your own screen.
 
-The pictures are the weapons' own pickup pictures. The LZS has none in the mod, so its picture was
-redrawn by Baican, and the Pib card got a small one of its own.
+The pictures are the weapons' own pickup pictures. The LZS and the Pib card have none in the mod,
+so they got their own: the LZS was redrawn by Baican.
 
 It only changes how you look. You still play as Tilin, with the same speed, weapons, sounds
 and size, and you still see your own hands and HUD. The others see the character walk,

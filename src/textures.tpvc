@@ -94,15 +94,17 @@ Sprite "TPELC5", 205, 180
 }
 
 // Weapon icons over players' heads (sprite TPWI, frames A-S; the table is in zscript.zs,
-// BuildWeaponIcons). Each one points at the weapon's own pickup picture, cut to the picture,
-// anchored at its bottom middle and scaled so its longer side is 28 units. The mod's LZS and
-// Pib card have no picture of their own, so those two are in graphics/.
+// BuildWeaponIcons). Each one points at the weapon's own pickup picture, cut to the picture and
+// anchored at its bottom middle. They're scaled to about the same amount of picture (a 14x14
+// square's worth) so long guns and chunky things look alike in size, never wider than 26 units
+// and never taller than 18. The mod's LZS and Pib card have no picture of their own, so those
+// two are in graphics/.
 
 // SAWOFF (chainsaw)
 Sprite "TPWIA0", 76, 22
 {
-	XScale 2.714
-	YScale 2.714
+	XScale 2.923
+	YScale 2.923
 	Offset 38, 22
 	Patch "CHAWA0", 0, 0
 }
@@ -110,8 +112,8 @@ Sprite "TPWIA0", 76, 22
 // CUCHILLO (knife)
 Sprite "TPWIB0", 3, 17
 {
-	XScale 0.607
-	YScale 0.607
+	XScale 0.944
+	YScale 0.944
 	Offset 1, 17
 	Patch "CUPIA0", 0, -2
 }
@@ -119,8 +121,8 @@ Sprite "TPWIB0", 3, 17
 // MARTILLO (hammer)
 Sprite "TPWIC0", 11, 14
 {
-	XScale 0.500
-	YScale 0.500
+	XScale 0.886
+	YScale 0.886
 	Offset 5, 14
 	Patch "MARPA0", -50, -31
 }
@@ -128,8 +130,8 @@ Sprite "TPWIC0", 11, 14
 // REVOLVER
 Sprite "TPWID0", 28, 11
 {
-	XScale 1.000
-	YScale 1.000
+	XScale 1.254
+	YScale 1.254
 	Offset 14, 11
 	Patch "REVPA0", -20, -3
 }
@@ -137,8 +139,8 @@ Sprite "TPWID0", 28, 11
 // HACHA (axe)
 Sprite "TPWIE0", 29, 46
 {
-	XScale 1.643
-	YScale 1.643
+	XScale 2.609
+	YScale 2.609
 	Offset 14, 46
 	Patch "AXEZZ0", 0, -10
 }
@@ -146,8 +148,8 @@ Sprite "TPWIE0", 29, 46
 // ESCOPETAYPISTOLA (shotgun and pistol)
 Sprite "TPWIF0", 53, 12
 {
-	XScale 1.893
-	YScale 1.893
+	XScale 2.038
+	YScale 2.038
 	Offset 26, 12
 	Patch "SCPIA0", -7, -2
 }
@@ -155,8 +157,8 @@ Sprite "TPWIF0", 53, 12
 // SSHOTGUN
 Sprite "TPWIG0", 55, 11
 {
-	XScale 1.964
-	YScale 1.964
+	XScale 2.115
+	YScale 2.115
 	Offset 27, 11
 	Patch "SSHIZ0", 0, 0
 }
@@ -164,8 +166,8 @@ Sprite "TPWIG0", 55, 11
 // LANZADIENTES (tooth launcher)
 Sprite "TPWIH0", 73, 19
 {
-	XScale 2.607
-	YScale 2.607
+	XScale 2.808
+	YScale 2.808
 	Offset 36, 19
 	Patch "LDESA0", 0, 0
 }
@@ -173,8 +175,8 @@ Sprite "TPWIH0", 73, 19
 // METRALLETA
 Sprite "TPWII0", 54, 18
 {
-	XScale 1.929
-	YScale 1.929
+	XScale 2.227
+	YScale 2.227
 	Offset 27, 18
 	Patch "MEPPA0", 0, 0
 }
@@ -182,8 +184,8 @@ Sprite "TPWII0", 54, 18
 // TARRO (gas)
 Sprite "TPWIJ0", 13, 27
 {
-	XScale 0.964
-	YScale 0.964
+	XScale 1.500
+	YScale 1.500
 	Offset 6, 27
 	Patch "GASSA0", 0, 0
 }
@@ -191,8 +193,8 @@ Sprite "TPWIJ0", 13, 27
 // LANZAF (Frida launcher)
 Sprite "TPWIK0", 99, 23
 {
-	XScale 3.536
-	YScale 3.536
+	XScale 3.808
+	YScale 3.808
 	Offset 49, 23
 	Patch "LZFPZ0", 0, 0
 }
@@ -200,8 +202,8 @@ Sprite "TPWIK0", 99, 23
 // LANZALLAMAS (flamethrower)
 Sprite "TPWIL0", 80, 47
 {
-	XScale 2.857
-	YScale 2.857
+	XScale 4.380
+	YScale 4.380
 	Offset 40, 47
 	Patch "LFESA0", 0, 0
 }
@@ -209,8 +211,8 @@ Sprite "TPWIL0", 80, 47
 // LZS and RECOLECTOR: LZS sprite redrawn by Baican (graphics/TPWILZS)
 Sprite "TPWIM0", 94, 29
 {
-	XScale 3.357
-	YScale 3.357
+	XScale 3.729
+	YScale 3.729
 	Offset 47, 29
 	Patch "TPWILZS", 0, 0
 }
@@ -218,8 +220,8 @@ Sprite "TPWIM0", 94, 29
 // MINIYO
 Sprite "TPWIN0", 27, 40
 {
-	XScale 1.429
-	YScale 1.429
+	XScale 2.347
+	YScale 2.347
 	Offset 13, 40
 	Patch "INFSA0", -15, -11
 }
@@ -227,26 +229,26 @@ Sprite "TPWIN0", 27, 40
 // MONONODESNUTRIDO, MONONOFULL
 Sprite "TPWIO0", 51, 52
 {
-	XScale 1.857
-	YScale 1.857
+	XScale 3.678
+	YScale 3.678
 	Offset 25, 52
 	Patch "HUEVF0", -2, -3
 }
 
-// PIBTAR: the Pib card, drawn for the add-on (graphics/TPWIPIB)
-Sprite "TPWIP0", 34, 22
+// PIBTAR: the Pib card (graphics/TPWIPIB)
+Sprite "TPWIP0", 46, 31
 {
-	XScale 1.214
-	YScale 1.214
-	Offset 17, 22
+	XScale 2.697
+	YScale 2.697
+	Offset 23, 31
 	Patch "TPWIPIB", 0, 0
 }
 
 // CAJALLAVER (key box)
 Sprite "TPWIQ0", 20, 14
 {
-	XScale 0.714
-	YScale 0.714
+	XScale 1.195
+	YScale 1.195
 	Offset 10, 14
 	Patch "CLAZC0", 0, 0
 }
@@ -254,8 +256,8 @@ Sprite "TPWIQ0", 20, 14
 // CAJALLAVEA (key box)
 Sprite "TPWIR0", 20, 14
 {
-	XScale 0.714
-	YScale 0.714
+	XScale 1.195
+	YScale 1.195
 	Offset 10, 14
 	Patch "CLAZB0", 0, 0
 }
@@ -263,8 +265,8 @@ Sprite "TPWIR0", 20, 14
 // CAJALLAVEB, CAJALLAVEESPECIAL (key box)
 Sprite "TPWIS0", 20, 14
 {
-	XScale 0.714
-	YScale 0.714
+	XScale 1.195
+	YScale 1.195
 	Offset 10, 14
 	Patch "CLAZA0", 0, 0
 }

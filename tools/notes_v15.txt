@@ -1,0 +1,9 @@
+**Weapon pictures: smaller, and a new Pib card**
+- The chunky pictures over friends' heads (key boxes, Pib card, Monono, Miniyo, gas, flamethrower, axe, hammer, knife) are a lot smaller now. Long guns stay about the same.
+- New Pib card picture.
+
+Already have the co-op files? Just run Host co-op.bat or Join co-op.bat with the internet on and it updates itself. Everyone in a game needs the same version.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE_PINK_VALLEY - ENG.pk3 1.1 from ModDB.
+
+The Pink Valley is by Vamvilodon. Beta Tilin's sprites and Ella's HUD faces are by TURI. LZS picture by Baican. This co-op add-on is an unofficial fan project by gore.
