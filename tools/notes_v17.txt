@@ -1,0 +1,11 @@
+**Picking the IWAD (fixes "Host found unknown files: DOOM2.WAD")**
+- If your PC has both DOOM2.WAD and freedoom2.wad, Host and Join now ask which one to use. Enter keeps the one you used last time. Everyone in a game has to use the same one.
+- The host's launcher now says which IWAD friends need.
+- Editing launcher\settings.json in Notepad works now (paths with single backslashes used to break the file, and the launcher quietly went back to DOOM2.WAD). If the file can't be read, the launcher says so and keeps a copy as settings.broken.json.
+- The add-on itself didn't change (same files code as v16), so v16 and v17 players can play together.
+
+Already have the co-op files? Just run Host co-op.bat or Join co-op.bat with the internet on and it updates itself. Everyone in a game needs the same version.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE_PINK_VALLEY - ENG.pk3 1.1 from ModDB.
+
+The Pink Valley is by Vamvilodon. Beta Tilin's sprites and Ella's HUD faces are by TURI. LZS picture by Baican. This co-op add-on is an unofficial fan project by gore.

@@ -76,10 +76,33 @@ function Ask([string]$Question, [string]$Default = '') {
     return $a
 }
 
+# settings.json edited in Notepad usually has paths with single backslashes ("C:\Games\freedoom2.wad").
+# JSON doesn't allow those, and \f or \n would even turn into other characters, so every backslash
+# that isn't already part of \\, \" or \uXXXX is doubled before reading.
+function Repair-Json([string]$Text) {
+    $fix = [System.Text.RegularExpressions.MatchEvaluator] {
+        param($m)
+        $t = $m.Groups[1].Value
+        if ($t -eq '\' -or $t -eq '"' -or $t.Length -eq 5) { return $m.Value }
+        return '\\' + $t
+    }
+    return [regex]::Replace($Text, '\\(\\|"|u[0-9a-fA-F]{4}|.?)', $fix)
+}
+
 function Load-Settings {
     $s = $null
     if (Test-Path -LiteralPath $SettingsFile) {
-        try { $s = Get-Content -LiteralPath $SettingsFile -Raw | ConvertFrom-Json } catch { $s = $null }
+        $raw = ''
+        try { $raw = [IO.File]::ReadAllText($SettingsFile) } catch { }
+        if ($raw.Trim()) {
+            try { $s = (Repair-Json $raw) | ConvertFrom-Json } catch { $s = $null }
+            if ($s -eq $null) {
+                # Don't lose someone's friends list without a word.
+                try { Copy-Item -LiteralPath $SettingsFile -Destination (Join-Path $LauncherDir 'settings.broken.json') -Force } catch { }
+                Say "Couldn't read launcher\settings.json (a missing comma or quote?). Starting with fresh settings;" 'Yellow'
+                Say 'the old file is kept as launcher\settings.broken.json.' 'Yellow'
+            }
+        }
     }
     if ($s -eq $null) { $s = New-Object PSObject }
     foreach ($k in @('engine', 'iwad', 'pv', 'name', 'character', 'skill', 'lastFriend', 'friendCharacter', 'nameAsked')) {
@@ -210,6 +233,72 @@ function Pick-File([string]$Title, [string]$Filter) {
     return $null
 }
 
+# DOOM2.WAD and freedoom2.wad next to this folder, in the folder above and in the game's folder
+# (a kind not found there is looked for in the usual places), then the IWAD in settings if it's
+# somewhere else. Always in that order, so the numbers don't move around between runs.
+function Find-Iwads($s, [string]$EngineDir) {
+    $parent = Split-Path -Parent $Root
+    $paths = @()
+    foreach ($n in @('DOOM2.WAD', 'freedoom2.wad')) {
+        $near = @("$Root\$n", "$parent\$n", "$EngineDir\$n" | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf })
+        if ($near.Count -gt 0) { $paths += $near }
+        else {
+            $far = Search-Near @($n)
+            if ($far) { $paths += $far }
+        }
+    }
+    if ($s.iwad) { $paths += [string]$s.iwad }
+    $seen = @{}
+    $out = @()
+    foreach ($p in $paths) {
+        if (-not $p -or -not [IO.Path]::IsPathRooted($p) -or -not (Test-Path -LiteralPath $p -PathType Leaf)) { continue }
+        $f = (Resolve-Path -LiteralPath $p).Path
+        if ($seen.ContainsKey($f.ToLowerInvariant())) { continue }
+        $seen[$f.ToLowerInvariant()] = 1
+        $out += $f
+    }
+    return $out
+}
+
+# The saved IWAD if it's still there. A saved bare name ("freedoom2.wad") or a file that moved
+# matches by name.
+function Pick-DefaultIwad($s, $Choices) {
+    if ($Choices.Count -eq 0) { return $null }
+    if ($s.iwad) {
+        foreach ($c in $Choices) { if ($c -ieq $s.iwad) { return $c } }
+        $leaf = Split-Path -Leaf $s.iwad
+        foreach ($c in $Choices) {
+            if ((Split-Path -Leaf $c) -ieq $leaf) {
+                if ([IO.Path]::IsPathRooted($s.iwad)) { Say ("The IWAD in settings.json ({0}) isn't there any more; using {1}." -f $s.iwad, $c) 'Yellow' }
+                return $c
+            }
+        }
+        Say ("Can't find the IWAD in settings.json: {0}" -f $s.iwad) 'Yellow'
+    }
+    return $Choices[0]
+}
+
+# Everyone in a game needs the same IWAD; otherwise UZDoom stops the join with "Host found
+# unknown files: DOOM2.WAD". With more than one on this PC, ask which (the last one is the default).
+function Choose-Iwad($s, $g) {
+    $c = @($script:IwadChoices)
+    if ($Mode -eq 'try' -or $c.Count -lt 2) { return }
+    Say ''
+    Say 'Which IWAD? Everyone in the game has to use the same one.'
+    $def = '1'
+    for ($i = 0; $i -lt $c.Count; $i++) {
+        if ($c[$i] -ieq $g.Iwad) { $def = [string]($i + 1) }
+        Say ('  {0}) {1,-14} {2}' -f ($i + 1), (Split-Path -Leaf $c[$i]), (Split-Path -Parent $c[$i]))
+    }
+    $a = Ask 'IWAD' $def
+    $n = 0
+    if ([int]::TryParse($a, [ref]$n) -and $n -ge 1 -and $n -le $c.Count) {
+        $g.Iwad = $c[$n - 1]
+        $s.iwad = $g.Iwad
+        Save-Settings $s
+    }
+}
+
 function Find-GameFiles($s) {
     $parent = Split-Path -Parent $Root
 
@@ -222,10 +311,10 @@ function Find-GameFiles($s) {
     }
     $engineDir = Split-Path -Parent $engine
 
-    # Everyone needs the same IWAD. DOOM2.WAD wins over freedoom2.wad in the same folder.
-    $iwad = First-Existing @($s.iwad, "$Root\DOOM2.WAD", "$Root\freedoom2.wad", "$parent\DOOM2.WAD", "$parent\freedoom2.wad",
-        "$engineDir\DOOM2.WAD", "$engineDir\freedoom2.wad")
-    if (-not $iwad) { $iwad = Search-Near @('DOOM2.WAD', 'freedoom2.wad') }
+    # Everyone needs the same IWAD. Every DOOM2.WAD and freedoom2.wad found is kept for Choose-Iwad;
+    # without a saved choice DOOM2.WAD comes first.
+    $script:IwadChoices = @(Find-Iwads $s $engineDir)
+    $iwad = Pick-DefaultIwad $s $script:IwadChoices
     if (-not $iwad) {
         Say "Can't find DOOM2.WAD or freedoom2.wad. Pick it in the window that opens." 'Yellow'
         $iwad = Pick-File 'Where is DOOM2.WAD (or freedoom2.wad)?' 'Doom 2 IWAD|*.wad'
@@ -274,7 +363,9 @@ function Ask-Character($s, [string]$Who = 'your') {
     $n = 0
     if ([int]::TryParse($a, [ref]$n) -and $n -ge 1 -and $n -le $Characters.Count) { return $Characters[$n - 1][0] }
     foreach ($c in $Characters) { if ($c[0] -ieq $a -or ($c[1] -replace ' ', '') -ieq ($a -replace ' ', '')) { return $c[0] } }
-    Say "  (don't know that one, keeping $lastLabel)" 'DarkYellow'
+    $keep = $lastLabel
+    if (-not $last) { $keep = 'Tilin' }
+    Say "  (don't know that one, keeping $keep)" 'DarkYellow'
     return $last
 }
 
@@ -420,6 +511,7 @@ if (-not $NoUpdate -and -not $Updated -and $s.autoUpdate -ne $false) {
 
 $g = Find-GameFiles $s
 Say ("Co-op version {0}, files code {1}. Everyone playing together should see the same code." -f (Local-Version), (Short-Hash $CoopPk3)) 'Cyan'
+Choose-Iwad $s $g
 Say ("Game: {0}   IWAD: {1}" -f (Split-Path -Leaf $g.Engine), (Split-Path -Leaf $g.Iwad)) 'DarkGray'
 
 $common = @('-iwad', ('"{0}"' -f $g.Iwad), '-file', ('"{0}"' -f $g.Pv), ('"{0}"' -f $CoopPk3))
@@ -442,6 +534,7 @@ function Start-Game([string[]]$GameArgs) {
 
 if ($Mode -eq 'host') {
     Show-HostAddress
+    Say ("Your friends need the same IWAD as you: {0}" -f (Split-Path -Leaf $g.Iwad)) 'Green'
     Say ''
     Say 'What do you want to play?'
     Say '  1) New game'
@@ -570,6 +663,7 @@ if ($Mode -eq 'join') {
     Say ''
     Say ("Joining {0} at {1}. The game waits until {0} starts." -f $pick.name, $pick.address) 'Green'
     Say "If it stays on 'Contacting host', check you're both on the same VPN network and both have the same files code." 'DarkGray'
+    Say ("If it says 'Host found unknown files', the host isn't using {0}. Use the host's IWAD (run Join again and pick it)." -f (Split-Path -Leaf $g.Iwad)) 'DarkGray'
     Start-Game $gameArgs
     Start-Sleep -Seconds 4
     exit 0

@@ -13,7 +13,8 @@ nothing.
 
 - **UZDoom 5.0.3** (recommended) or GZDoom **4.14.2**: everyone on the same engine and the same version
 - the same IWAD as everyone else: `DOOM2.WAD`, or `freedoom2.wad` if your group uses Freedoom.
-  It has to be the exact same file for everyone, or UZDoom won't let you join
+  It has to be the exact same file for everyone, or UZDoom won't let you join. If your PC has
+  both, the launcher asks which one to use (Enter keeps the one you used last time)
 - `THE_PINK_VALLEY - ENG.pk3` (version 1.1, from ModDB)
 - this whole `TPV co-op` folder (keep the `launcher` folder next to the .bat files)
 - to play over the internet: everyone in the same **Radmin VPN** network (free), or Tailscale /
@@ -37,6 +38,10 @@ point at them, and it remembers them after that.
 
 Nobody can join a game that has already started, so start together. If someone drops out,
 save, and start again with **Continue**.
+
+If joining stops with **Host found unknown files: DOOM2.WAD** (or `freedoom2.wad`), you and the
+host use different IWADs. The host's launcher says which one the host uses ("Your friends need
+the same IWAD as you"). Run Join again and pick that one.
 
 To try it alone, run **Try it on this PC (two windows).bat**. It opens a host window and a
 friend window on the same computer. Only the window you click into gets your keyboard.
@@ -205,7 +210,8 @@ It has been played over Radmin VPN, but nobody has played the whole story in co-
 - `TPV_TagAlong_Coop.pk3`: the add-on (load it after the Pink Valley pk3)
 - `Host co-op.bat`, `Join co-op.bat`, `Try it on this PC (two windows).bat`: start here
 - `launcher/`: what the .bat files run. `launcher/settings.json` keeps your friends list, your
-  character and where your game files are; delete it to start over.
+  character and where your game files are; delete it to start over. If a hand edit breaks it, the
+  launcher says so and keeps a copy as `settings.broken.json`.
 - Source: https://github.com/charliee1w/tpv-coop
 
 The Pink Valley is by Vamvilodon; all credit for the game goes to him.
