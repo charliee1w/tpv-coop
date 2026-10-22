@@ -111,7 +111,7 @@ class TPVC_Handler : StaticEventHandler
 	bool spawningCopies;
 	Array<Actor> newSpawns;	// spawned by scripts this tic, checked once their tags are set
 	Array<Actor> myCopies;	// copies this add-on made on this map (never copied again)
-	const MAX_WAVE_COPIES = 400;	// safety cap per map
+	const MAX_WAVE_COPIES = 800;	// safety cap per map (room for 10 players' worth)
 
 	// Counters (shown by tpvc_status, checked by the self-test).
 	int nBlocked;
@@ -1338,7 +1338,7 @@ class TPVC_Handler : StaticEventHandler
 			m = 0;
 			for (int i = 0; i < MAXPLAYERS; i++) if (playeringame[i]) m++;
 		}
-		return min(m, 8.0);
+		return min(m, 10.0);	// up to 10 players, so up to 10 of each enemy
 	}
 
 	bool CanCopy(Actor a)
@@ -1359,7 +1359,6 @@ class TPVC_Handler : StaticEventHandler
 		mapCopies = 0;
 		mapExpected = 0;
 		double mult = EnemyMult();
-		if (mult > 8) mult = 8;
 		if (mult < 1.001) return;
 
 		Array<Actor> originals;
@@ -1457,7 +1456,6 @@ class TPVC_Handler : StaticEventHandler
 		if (cands.Size() == 0) return;
 
 		double mult = EnemyMult();
-		if (mult > 8) mult = 8;
 		double extraEach = mult - 1;
 		int made = 0;
 		spawningCopies = true;

@@ -469,12 +469,12 @@ if ($Mode -eq 'host') {
         if ($sk -notmatch '^[1-6]$') { $sk = '3' }
         $s.skill = $sk
         Say ''
-        Say 'Enemy multiplier: how many of each enemy the maps place (1 = normal, 2 = double, 1.5 works too).'
+        Say 'Enemy multiplier: how many of each enemy the maps place (1 = normal, 2 = double, up to 10, 1.5 works too).'
         Say 'Bosses, story enemies and civilians are never copied.'
         $mult = Ask 'Enemy multiplier' 'one per player'
         if ($mult -eq 'one per player') { $mult = '0' }
         $mv = 0.0
-        if (-not [double]::TryParse($mult, [Globalization.NumberStyles]::Float, [Globalization.CultureInfo]::InvariantCulture, [ref]$mv) -or $mv -lt 0 -or $mv -gt 8) { $mv = 0 }
+        if (-not [double]::TryParse($mult, [Globalization.NumberStyles]::Float, [Globalization.CultureInfo]::InvariantCulture, [ref]$mv) -or $mv -lt 0 -or $mv -gt 10) { $mv = 0 }
         $gameArgs += @('-skill', $sk, '+tpvc_startmap', $map, '+tpvc_enemymult', $mv.ToString([Globalization.CultureInfo]::InvariantCulture))
     }
 
@@ -483,12 +483,13 @@ if ($Mode -eq 'host') {
     Save-Settings $s
 
     if ($g.IsUZ) {
-        # 4 spots, started from the waiting window. net_limitsaves 0: anyone can save, not just the host.
-        $gameArgs += @('-host', '4', '+net_limitsaves 0')
+        # 10 spots, started from the waiting window. net_limitsaves 0: anyone can save, not just the host.
+        $gameArgs += @('-host', '10', '+net_limitsaves 0')
     }
     else {
-        $n = Ask 'How many players in total, including you? 2-4' '2'
-        if ($n -notmatch '^[2-4]$') { $n = '2' }
+        # GZDoom can't do more than 8.
+        $n = Ask 'How many players in total, including you? 2-8' '2'
+        if ($n -notmatch '^[2-8]$') { $n = '2' }
         $gameArgs += @('-host', $n)
     }
     $gameArgs += $hostRules

@@ -1,9 +1,9 @@
 # The Pink Valley: tag-along co-op (unofficial add-on)
 
-Play The Pink Valley with up to 3 friends (4 players). Player 1 (the host) plays the game
-exactly as in single player and is the only one who triggers story events. Everyone else is
-another Tilin who tags along: they move, fight, open doors and pick up supplies. An optional enemy
-multiplier adds more enemies so the fights hold up with more people.
+Play The Pink Valley with up to 9 friends (10 players on UZDoom, 8 on GZDoom). Player 1 (the
+host) plays the game exactly as in single player and is the only one who triggers story events.
+Everyone else is another Tilin who tags along: they move, fight, open doors and pick up supplies.
+An optional enemy multiplier adds more enemies so the fights hold up with more people.
 
 This is a fan add-on, not part of the mod. It doesn't replace or include any of Vamvilodon's
 files, so it only works on top of his `THE_PINK_VALLEY - ENG.pk3`. In single player it does
@@ -31,9 +31,9 @@ point at them, and it remembers them after that.
 2. Each friend runs **Join co-op.bat**. The first time, type the host's name and address; after that
    just pick them from the list (it remembers everyone you've joined).
 3. On UZDoom the host's waiting window lists everyone who has joined. When everyone's there, the
-   host clicks **Start Game**. Any number from 2 to 4 works, and the enemy multiplier matches
-   however many of you there are. (On GZDoom the host types the number of players instead and
-   the game starts when that many have joined.)
+   host clicks **Start Game**. Any number from 2 to 10 works, and the enemy multiplier matches
+   however many of you there are. (On GZDoom the host types the number of players instead, 2 to
+   8, which is as many as GZDoom can do, and the game starts when that many have joined.)
 
 Nobody can join a game that has already started, so start together. If someone drops out,
 save, and start again with **Continue**.
@@ -109,8 +109,9 @@ Tilin). Everyone else keeps Tilin's face.
 
 ## Enemy multiplier
 
-The host picks how many of each enemy there are: 1 is normal, 2 is double, and 1.5 works
-too. The default is one per player, counting everyone who actually joined. Extra enemies appear next to the originals, with
+The host picks how many of each enemy there are: 1 is normal, 2 is double, up to 10, and 1.5
+works too. The default is one per player, counting everyone who actually joined (so 10 players
+get 10 of each enemy). Extra enemies appear next to the originals, with
 the same facing and settings.
 
 - **Enemies the maps place** get copies when a map starts.
@@ -122,7 +123,7 @@ the same facing and settings.
   any enemy a script handles one by one (a tag of its own or a special). This keeps scripted
   scenes working the way Vamvilodon wrote them.
 - If there's no room next to an enemy, it doesn't get a copy. As a safety limit, a map never
-  gets more than 400 extra wave enemies.
+  gets more than 800 extra wave enemies.
 
 Some maps have few enemies the multiplier can copy, because most of their fights are
 scripted story scenes. Bosses keep their normal health.
@@ -139,7 +140,7 @@ Join co-op.bat asks and pick the same save. You can't load from the menu during 
 - `tpvc_follow 0/1`: pull friends along when the host gets teleported (default 1)
 - `tpvc_startmap <map>`: map a new co-op game starts on (default A_NEW_DAY). The host .bat
   asks for it.
-- `tpvc_enemymult <n>`: enemy multiplier, 1 to 8, or 0 for one per player (the host .bat asks
+- `tpvc_enemymult <n>`: enemy multiplier, 1 to 10, or 0 for one per player (the host .bat asks
   for it). It takes effect the next time a map starts.
 - `tpvc_debug 0/1`: print what the add-on does to the console
 

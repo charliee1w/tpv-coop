@@ -1,0 +1,9 @@
+**Up to 10 players**
+- UZDoom games now have room for 10 players: the host and 9 friends. GZDoom still tops out at 8 (that's the engine's limit).
+- The enemy multiplier now goes up to 10, so 10 players can get 10 of each enemy. "Auto" (one of each enemy per player) counts all 10.
+
+Already have the co-op files? Just run Host co-op.bat or Join co-op.bat with the internet on and it updates itself. Everyone in a game needs the same version.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE_PINK_VALLEY - ENG.pk3 1.1 from ModDB.
+
+The Pink Valley is by Vamvilodon. Beta Tilin's sprites and Ella's HUD faces are by TURI. LZS picture by Baican. This co-op add-on is an unofficial fan project by gore.
