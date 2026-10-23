@@ -1,0 +1,10 @@
+**Files code now covers The Pink Valley and the IWAD**
+- The launcher's files code has three parts: the add-on, The Pink Valley and the IWAD (for example 908EFD-875DC2-A8772E). If someone gets "Host found unknown files", compare codes with the host; the part that differs shows which file.
+- The add-on is made for THE PINK VALLEY 1.1 ENGLISH VERSION from ModDB (THE_PINK_VALLEY - ENG.pk3, 191,739,591 bytes). The Spanish, Russian and Chinese 1.1 downloads are different files, so they can't join a game with the English one. The launcher warns you if yours is a different file.
+- The add-on itself is the same as v19, so v19 and v20 players can play together.
+
+Already have the co-op files? Just run Host co-op.bat or Join co-op.bat with the internet on and it updates itself. Everyone in a game needs the same version.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE PINK VALLEY 1.1 ENGLISH VERSION from ModDB.
+
+The Pink Valley is by Vamvilodon. Beta Tilin's sprites and Ella's HUD faces are by TURI. LZS picture by Baican. This co-op add-on is an unofficial fan project by gore.

@@ -15,7 +15,9 @@ nothing.
 - the same IWAD as everyone else: `DOOM2.WAD`, or `freedoom2.wad` if your group uses Freedoom.
   It has to be the exact same file for everyone, or UZDoom won't let you join. If your PC has
   both, the launcher asks which one to use (Enter keeps the one you used last time)
-- `THE_PINK_VALLEY - ENG.pk3` (version 1.1, from ModDB)
+- `THE_PINK_VALLEY - ENG.pk3` from **THE PINK VALLEY 1.1 ENGLISH VERSION** on ModDB (191,739,591
+  bytes). The Spanish, Russian and Chinese 1.1 downloads are different files, and everyone in a
+  game needs the exact same one
 - this whole `TPV co-op` folder (keep the `launcher` folder next to the .bat files)
 - to play over the internet: everyone in the same **Radmin VPN** network (free), or Tailscale /
   ZeroTier. Or the host forwards **UDP port 5029** on their router, and then friends need nothing.
@@ -39,9 +41,10 @@ point at them, and it remembers them after that.
 Nobody can join a game that has already started, so start together. If someone drops out,
 save, and start again with **Continue**.
 
-If joining stops with **Host found unknown files: DOOM2.WAD** (or `freedoom2.wad`), you and the
-host use different IWADs. The host's launcher says which one the host uses ("Your friends need
-the same IWAD as you"). Run Join again and pick that one.
+If joining stops with **Host found unknown files**, the file it names is different on your PC
+and on the host's: the IWAD (`DOOM2.WAD` or `freedoom2.wad`), `THE_PINK_VALLEY - ENG.pk3` or the
+add-on. Compare files codes with the host (see Updates). For the IWAD, run Join again and pick
+the one the host uses. For The Pink Valley, everyone needs the English 1.1 from ModDB.
 
 To try it alone, run **Try it on this PC (two windows).bat**. It opens a host window and a
 friend window on the same computer. Only the window you click into gets your keyboard.
@@ -53,8 +56,10 @@ in `launcher\last-run.txt`: send a screenshot or that file to whoever gave you t
 
 Every time you run one of the .bat files it checks for a newer version and installs it before the
 game starts, so everyone who plays together always has the same files. Each launcher shows a
-**files code**: if a friend can't join, compare codes. If they differ, run the .bat again with
-the internet on. New versions are posted at https://github.com/charliee1w/tpv-coop/releases.
+**files code** in three parts: the add-on, The Pink Valley and the IWAD (for example
+`908EFD-875DC2-A8772E`). If a friend can't join, compare codes; the part that differs shows
+which file. If it's the add-on part, run the .bat again with the internet on. New versions are
+posted at https://github.com/charliee1w/tpv-coop/releases.
 
 ## Pick your character
 

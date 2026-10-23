@@ -105,7 +105,7 @@ function Load-Settings {
         }
     }
     if ($s -eq $null) { $s = New-Object PSObject }
-    foreach ($k in @('engine', 'iwad', 'pv', 'name', 'character', 'skill', 'lastFriend', 'friendCharacter', 'nameAsked')) {
+    foreach ($k in @('engine', 'iwad', 'pv', 'name', 'character', 'skill', 'lastFriend', 'friendCharacter', 'nameAsked', 'pvCode', 'iwadCode')) {
         if (-not ($s.PSObject.Properties.Name -contains $k)) { $s | Add-Member -NotePropertyName $k -NotePropertyValue '' }
     }
     if (-not ($s.PSObject.Properties.Name -contains 'friends')) { $s | Add-Member -NotePropertyName friends -NotePropertyValue @() }
@@ -130,6 +130,25 @@ function Get-Sha256([string]$Path) {
 function Short-Hash([string]$Path) {
     if (-not (Test-Path -LiteralPath $Path)) { return '------' }
     return (Get-Sha256 $Path).Substring(0, 6)
+}
+
+# The add-on was made and tested with "THE PINK VALLEY 1.1 ENGLISH VERSION" from ModDB
+# (THE_PINK_VALLEY - ENG.pk3, 191,739,591 bytes). The Spanish, Russian and Chinese 1.1 builds are
+# different files, and UZDoom only lets people join when everyone has the exact same one.
+$KnownPvCode = '875DC2'
+
+# Short code of a big file (the Pink Valley pk3, the IWAD). Kept in settings with the file's size
+# and date, so a 190 MB file is only read again when it changes.
+function Cached-Code($s, [string]$Key, [string]$Path) {
+    if (-not $Path -or -not (Test-Path -LiteralPath $Path -PathType Leaf)) { return '------' }
+    $fi = Get-Item -LiteralPath $Path
+    $stamp = '{0}|{1}|{2}' -f $fi.FullName, $fi.Length, $fi.LastWriteTimeUtc.Ticks
+    $saved = [string]$s.$Key
+    if ($saved.Length -gt 7 -and $saved.Substring(7) -eq $stamp) { return $saved.Substring(0, 6) }
+    $code = (Get-Sha256 $Path).Substring(0, 6)
+    $s.$Key = $code + '|' + $stamp
+    Save-Settings $s
+    return $code
 }
 
 function Local-Version {
@@ -525,9 +544,19 @@ if (-not $NoUpdate -and -not $Updated -and $s.autoUpdate -ne $false) {
 }
 
 $g = Find-GameFiles $s
-Say ("Co-op version {0}, files code {1}. Everyone playing together should see the same code." -f (Local-Version), (Short-Hash $CoopPk3)) 'Cyan'
 Choose-Iwad $s $g
 Say ("Game: {0}   IWAD: {1}" -f (Split-Path -Leaf $g.Engine), (Split-Path -Leaf $g.Iwad)) 'DarkGray'
+
+# One code for the three files UZDoom checks when someone joins: the add-on, The Pink Valley and
+# the IWAD. Everyone in a game needs the same code; the part that differs shows which file.
+$pvCode = Cached-Code $s 'pvCode' $g.Pv
+$FilesCode = '{0}-{1}-{2}' -f (Short-Hash $CoopPk3), $pvCode, (Cached-Code $s 'iwadCode' $g.Iwad)
+Say ("Co-op version {0}. Files code {1} (add-on - Pink Valley - IWAD)." -f (Local-Version), $FilesCode) 'Cyan'
+Say 'Everyone playing together needs the same files code.' 'Cyan'
+if ($pvCode -ne '------' -and $pvCode -ne $KnownPvCode) {
+    Say ("Your Pink Valley file isn't the one the add-on was made for: THE PINK VALLEY 1.1 ENGLISH VERSION from ModDB") 'Yellow'
+    Say ("(THE_PINK_VALLEY - ENG.pk3, 191,739,591 bytes, code {0}). Friends who have that one can't join you." -f $KnownPvCode) 'Yellow'
+}
 
 $common = @('-iwad', ('"{0}"' -f $g.Iwad), '-file', ('"{0}"' -f $g.Pv), ('"{0}"' -f $CoopPk3))
 $hostRules = @('+sv_noplayerclip 1', '+alwaysapplydmflags 1', '+sv_weaponstay 0', '+sv_cooploseinventory 0', '+sv_cooplosekeys 0',
@@ -549,7 +578,7 @@ function Start-Game([string[]]$GameArgs) {
 
 if ($Mode -eq 'host') {
     Show-HostAddress
-    Say ("Your friends need the same IWAD as you: {0}" -f (Split-Path -Leaf $g.Iwad)) 'Green'
+    Say ("Your friends need the same files code as you: {0} (IWAD: {1})" -f $FilesCode, (Split-Path -Leaf $g.Iwad)) 'Green'
     Say ''
     Say 'What do you want to play?'
     Say '  1) New game'
@@ -685,9 +714,10 @@ if ($Mode -eq 'join') {
 
     Say ''
     Say ("Joining {0} at {1}. The game waits until {0} starts." -f $pick.name, $pick.address) 'Green'
-    Say "If it stays on 'Contacting host', check you're both on the same VPN network and both have the same files code." 'DarkGray'
+    Say "If it stays on 'Contacting host', check you're both on the same VPN network." 'DarkGray'
     Say "In the game, N shows your connection to the host (ping)." 'DarkGray'
-    Say ("If it says 'Host found unknown files', the host isn't using {0}. Use the host's IWAD (run Join again and pick it)." -f (Split-Path -Leaf $g.Iwad)) 'DarkGray'
+    Say "If it says 'Host found unknown files', the file it names is different from the host's. Compare files codes" 'DarkGray'
+    Say ("with the host (yours is {0}: add-on - Pink Valley - IWAD)." -f $FilesCode) 'DarkGray'
     Start-Game $gameArgs
     Start-Sleep -Seconds 4
     exit 0
