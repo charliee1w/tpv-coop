@@ -45,4 +45,5 @@ OptionMenu "TPVC_Options"
 	StaticText "A picture of the weapon each friend is holding.", 1
 	StaticText " "
 	Control "Warp to the host", "netevent tpvc_warp"
+	Control "Connection stats (everyone's ping)", "stat network"
 }

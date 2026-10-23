@@ -109,6 +109,7 @@ Tilin). Everyone else keeps Tilin's face.
 - **Follows the host.** When a script or teleporter moves the host, everyone comes along.
   Fades, slow walks and no-jump sections happen to everyone.
 - **Press J** to warp to the host. If the host presses J, it pulls everyone to them.
+- **Press N** for connection stats: everyone's ping (see "Big groups and friends far away").
 - **Respawning:** if someone dies, pressing Use brings them back next to the other player
   instead of at the start of the map.
 
@@ -132,6 +133,35 @@ the same facing and settings.
 
 Some maps have few enemies the multiplier can copy, because most of their fights are
 scripted story scenes. Bosses keep their normal health.
+
+Every PC runs every enemy, and the slowest PC sets the pace for everyone. With 10 players, x10
+on a busy map is about 4 to 5 times the work of x1. For a big group on mixed PCs, 2 to 4 is
+safer than one per player.
+
+## Big groups and friends far away
+
+This was tested with 10 players on one PC, with fake distance and lost packets between the
+host and each friend:
+
+- **Distance alone is fine.** With friends 40 to 450 ms away, the game kept its full speed.
+  What distance adds is delay: your own movement stays instant, but shots, doors and enemies
+  react a little late, about as late as the slowest friend's connection to the host.
+- **Lost packets cause the hitches.** With 2% of packets lost, the game froze for a moment a
+  few times every 5 seconds. The host's launcher now always has the game send every packet
+  twice, which removed most of those freezes. It costs the host under 1 Mbit/s of upload with
+  10 players.
+- **On UZDoom everything goes through the host.** Each friend only needs a good connection to
+  the host, not to each other. Pick as host whoever has the best connection to everyone:
+  wired, in the middle of the group on the map, and on a decent PC.
+- **Use a cable, not Wi-Fi**, and pause big downloads and streams while you play. Wi-Fi loses
+  packets.
+- **VPNs:** Radmin VPN works, but when it can't connect two PCs directly it sends everything
+  through its relay servers, which adds delay and lost packets. Fastest is no VPN: the host
+  forwards **UDP port 5029** on their router to their PC, and friends join the host's public
+  address (the host's launcher shows it). Tailscale and ZeroTier usually connect directly too.
+- **Press N** in the game for connection stats. The host sees each friend's average latency
+  (ping). If the game keeps hitching, look for the friend with a much higher number, or with
+  RT or MISS next to their name (lost packets being sent again).
 
 ## Saving and loading
 
@@ -204,6 +234,12 @@ The add-on was tested in real GZDoom 4.14.2 net games on one PC, with 2 and with
 Every check passed on every map, with no desyncs, on GZDoom 4.14.2 and on UZDoom 5.0.3. A co-op
 save was also made, then loaded into a new two-player session, and every check passed there too.
 It has been played over Radmin VPN, but nobody has played the whole story in co-op yet.
+
+Big groups: 10 UZDoom players on one PC, on PINK with every enemy awake and chasing a player.
+The add-on itself takes about 0.1 ms per game tic; the enemies are what costs (about 1.3 ms per
+tic at x1, 3.4 ms at x4 and 6 ms at x10 on a Ryzen 7 5800X3D running all 10 windows). With a
+relay that adds 40 to 450 ms and lost packets between the host and each friend, see "Big
+groups and friends far away".
 
 ## Files
 

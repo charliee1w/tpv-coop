@@ -1,0 +1,12 @@
+**Smoother games with big groups and friends far away**
+- The game now sends every packet twice. In a 10-player test with 2% of packets lost, the short freezes dropped from a few every 5 seconds to about one every 15 seconds. It costs the host under 1 Mbit/s of upload with 10 players. The host's launcher turns it on for everyone.
+- Press N in the game for connection stats: everyone's ping, so you can see whose connection is causing lag.
+- The host's launcher shows how to skip the VPN (forward UDP port 5029, friends join your public address). That's the shortest path for friends far away.
+- "New game on a map of your choice" works on UZDoom now (it always started on A New Day).
+- README has a new section, "Big groups and friends far away": who should host, cables vs Wi-Fi, VPNs, and how big the enemy multiplier should be with lots of players.
+
+Already have the co-op files? Just run Host co-op.bat or Join co-op.bat with the internet on and it updates itself. Everyone in a game needs the same version.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE_PINK_VALLEY - ENG.pk3 1.1 from ModDB.
+
+The Pink Valley is by Vamvilodon. Beta Tilin's sprites and Ella's HUD faces are by TURI. LZS picture by Baican. This co-op add-on is an unofficial fan project by gore.

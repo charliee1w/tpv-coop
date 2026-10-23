@@ -647,6 +647,7 @@ class TPVC_Handler : StaticEventHandler
 
 	override void WorldLoaded(WorldEvent e)
 	{
+		if (e.IsSaveGame) startChecked = true;	// a loaded game is already where it should be
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
 			placeNow[i] = 0;
@@ -728,9 +729,14 @@ class TPVC_Handler : StaticEventHandler
 	{
 		if (startChecked) return false;
 		startChecked = true;
-		if (!(level.MapName ~== "MAP01")) return false;
 		String target = tpvc_startmap;
-		if (target == "" || !LevelInfo.MapExists(target)) target = "A_NEW_DAY";
+		if (!(level.MapName ~== "MAP01"))
+		{
+			// UZDoom starts net games on the mod's first map by itself. Only move on when the
+			// host picked another map (New game on a map of your choice).
+			if (target == "" || target ~== level.MapName || !LevelInfo.MapExists(target)) return false;
+		}
+		else if (target == "" || !LevelInfo.MapExists(target)) target = "A_NEW_DAY";
 		if (!LevelInfo.MapExists(target)) return false;
 		Console.Printf("\cfPink Valley co-op:\c- starting %s", target);
 		level.ChangeLevel(target, 0, CHANGELEVEL_NOINTERMISSION | CHANGELEVEL_RESETINVENTORY | CHANGELEVEL_RESETHEALTH, -1);
