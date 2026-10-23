@@ -739,6 +739,19 @@ class TPVC_Handler : StaticEventHandler
 		else if (target == "" || !LevelInfo.MapExists(target)) target = "A_NEW_DAY";
 		if (!LevelInfo.MapExists(target)) return false;
 		Console.Printf("\cfPink Valley co-op:\c- starting %s", target);
+
+		// This map's start script has already run on everyone (on UZDoom that is A New Day's
+		// intro: speed 0.10 and no jumping), and a player's body keeps its speed from map to map.
+		// Start the chosen map from Tilin's own speed, the way a new game does.
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			if (!playeringame[i] || !players[i].mo) continue;
+			let mo = players[i].mo;
+			let def = GetDefaultByType((class<PlayerPawn>)(mo.GetClass()));
+			if (!def) continue;
+			mo.Speed = def.Speed;
+			mo.JumpZ = def.JumpZ;
+		}
 		level.ChangeLevel(target, 0, CHANGELEVEL_NOINTERMISSION | CHANGELEVEL_RESETINVENTORY | CHANGELEVEL_RESETHEALTH, -1);
 		return true;
 	}

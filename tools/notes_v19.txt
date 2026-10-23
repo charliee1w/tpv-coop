@@ -1,0 +1,10 @@
+**Fix: starting on a map of your choice on UZDoom**
+- "New game on a map of your choice" (new in v18) made everyone crawl on UZDoom: the game went through A New Day's intro for a split second first, and that intro's slow walk and no-jump setting stuck to everyone on the map you picked. SHOW, HAPPY, SUPER, Un bacio, PINK and MELANCOLIA were the ones you'd notice it on. The chosen map now starts at Tilin's normal speed, the same as on GZDoom.
+- Full check of the add-on against the mod's maps and scripts, plus the whole self-test on both engines (2 and 4 players, all 19 maps, friends dead at a map change, old saves on Home). Nothing else needed changing.
+- The add-on's file changed, so everyone in a game needs v19 (the launcher updates itself).
+
+Already have the co-op files? Just run Host co-op.bat or Join co-op.bat with the internet on and it updates itself. Everyone in a game needs the same version.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE_PINK_VALLEY - ENG.pk3 1.1 from ModDB.
+
+The Pink Valley is by Vamvilodon. Beta Tilin's sprites and Ella's HUD faces are by TURI. LZS picture by Baican. This co-op add-on is an unofficial fan project by gore.
