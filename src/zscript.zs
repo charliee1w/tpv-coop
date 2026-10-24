@@ -1394,6 +1394,14 @@ class TPVC_Handler : StaticEventHandler
 		return true;
 	}
 
+	// Friendly fire: the engine's teamdamage (share of the damage players do to each other that
+	// counts; 0 by default, so friends can't hurt each other). The launcher and the menu set it.
+	static double TeamDamage()
+	{
+		let c = CVar.GetCVar('teamdamage');
+		return c ? c.GetFloat() : 0;
+	}
+
 	void ScaleHealth(Actor a, double h)
 	{
 		if (!a || h < 1.001 || a.health <= 0) return;
@@ -1717,8 +1725,8 @@ class TPVC_Handler : StaticEventHandler
 		int nCorpse = 0;
 		let cit = ThinkerIterator.Create("TPVC_Costume");
 		for (let a = TPVC_Costume(cit.Next()); a; a = TPVC_Costume(cit.Next())) { if (a.orphan) nCorpse++; else nLive++; }
-		Console.Printf("\cf[co-op status]\c- map %s tic %d  mod=%d  blocked=%d doors=%d rattles=%d pickups=%d rerouted=%d placed=%d respawns=%d  enemies x%.2f: %d placed, %d extra, %d extra in waves  enemy health x%.2f on %d  costumes %d (+%d on corpses)  stand-ins %d/%d (%d left)  home armed %d",
-			level.MapName, level.maptime, modPresent ? 1 : 0, nBlocked, nGuestDoors, nRattles, nGuestPickups, nRerouted, nPlaced, nRespawns, EnemyMult(), mapOriginals, mapCopies, mapWaveCopies, HealthMult(), mapScaled, nLive, nCorpse,
+		Console.Printf("\cf[co-op status]\c- map %s tic %d  mod=%d  blocked=%d doors=%d rattles=%d pickups=%d rerouted=%d placed=%d respawns=%d  enemies x%.2f: %d placed, %d extra, %d extra in waves  enemy health x%.2f on %d  friendly fire %.2f  costumes %d (+%d on corpses)  stand-ins %d/%d (%d left)  home armed %d",
+			level.MapName, level.maptime, modPresent ? 1 : 0, nBlocked, nGuestDoors, nRattles, nGuestPickups, nRerouted, nPlaced, nRespawns, EnemyMult(), mapOriginals, mapCopies, mapWaveCopies, HealthMult(), mapScaled, TeamDamage(), nLive, nCorpse,
 			standInsMade, standInsWanted, standInsLeft, nHomeArmed);
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
@@ -2131,6 +2139,22 @@ class TPVC_Handler : StaticEventHandler
 			}
 			if (tWeap) Check(g.FindInventory(tWeap) == null, "guest loses a weapon when the host loses it");
 			Check(abs(g.Speed - host.Speed) < 0.001, "guest speed follows the host back");
+
+			// Friendly fire follows teamdamage: off, a guest's hit does the host nothing; on, it hurts.
+			// After the HUD checks, since a hit puts the host in Pain, which hands the HUD back. (The
+			// test kit keeps everyone in god mode, so it is lifted for this one hit.)
+			{
+				double td = TeamDamage();
+				int hadCheats = host.player.cheats;
+				host.player.cheats &= ~CF_GODMODE;
+				int hpBefore = host.health;
+				host.DamageMobj(g, g, 10, 'Normal');
+				int lost = hpBefore - host.health;
+				host.player.cheats = hadCheats;
+				host.health = hpBefore;
+				host.player.health = hpBefore;
+				Check(td <= 0.001 ? lost == 0 : lost > 0, String.Format("friendly fire %s (teamdamage %.2f): a guest's hit took %d from the host", td <= 0.001 ? "off" : "on", td, lost));
+			}
 
 			if (EnemyMult() > 1.001 || HealthMult() > 1.001)
 			{

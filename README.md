@@ -115,6 +115,8 @@ Tilin). Everyone else keeps Tilin's face.
 - **Follows the host.** When a script or teleporter moves the host, everyone comes along.
   Fades, slow walks and no-jump sections happen to everyone.
 - **Press J** to warp to the host. If the host presses J, it pulls everyone to them.
+- **Friendly fire is off** unless the host turns it on: Host co-op.bat asks (off, half or on), and
+  it can be changed any time in **Options > Pink Valley co-op > Friendly fire** (host only).
 - **Press N** for connection stats: everyone's ping (see "Big groups and friends far away").
 - **Respawning:** if someone dies, pressing Use brings them back next to the other player
   instead of at the start of the map.
@@ -203,6 +205,8 @@ Join co-op.bat asks and pick the same save. You can't load from the menu during 
   enemy multiplier and the player count, up to 4; the host .bat asks for it). Takes effect the
   next time a map starts.
 - `tpvc_debug 0/1`: print what the add-on does to the console
+- `teamdamage <0-1>`: friendly fire, the engine's own setting (0 = off, 0.5 = half damage, 1 = on;
+  the host .bat asks for it and the co-op menu has it)
 
 ## Known limits
 
@@ -254,6 +258,7 @@ The add-on was tested in real GZDoom 4.14.2 net games on one PC, with 2 and with
 - with the enemy multiplier: map copies, and a scripted wave growing under its tag
 - with enemy health: every map copy and every scripted spawn has the raised health, and a boss
   keeps its normal health
+- friendly fire: with it off a guest's hit does the host no damage, with it on it does
 - characters: every character's frames exist, a guest dressed as Ella is drawn
   where they stand and gets Ella's HUD face, the costume stays on the corpse and plays the
   death, and switching back to Tilin shows Tilin again

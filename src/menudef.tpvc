@@ -22,6 +22,15 @@ OptionString "TPVC_Characters"
 	"lovemachine", "Love Machine"
 }
 
+// Friendly fire is the engine's teamdamage setting (how much of the damage players do to each other
+// counts). A server setting: only the host can change it, and it reaches everyone.
+OptionValue "TPVC_FriendlyFire"
+{
+	0, "Off"
+	0.5, "Half damage"
+	1, "On"
+}
+
 AddOptionMenu "OptionsMenu"
 {
 	Submenu "Pink Valley co-op", "TPVC_Options"
@@ -43,6 +52,10 @@ OptionMenu "TPVC_Options"
 	StaticText " "
 	Option "Friends' weapons over their heads", "tpvc_weaponicons", "OnOff"
 	StaticText "A picture of the weapon each friend is holding.", 1
+	StaticText " "
+	StaticText " "
+	Option "Friendly fire (host only)", "teamdamage", "TPVC_FriendlyFire"
+	StaticText "Whether players can hurt each other. Off unless the host turns it on.", 1
 	StaticText " "
 	Control "Warp to the host", "netevent tpvc_warp"
 	Control "Connection stats (everyone's ping)", "stat network"

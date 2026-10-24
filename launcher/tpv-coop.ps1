@@ -105,7 +105,7 @@ function Load-Settings {
         }
     }
     if ($s -eq $null) { $s = New-Object PSObject }
-    foreach ($k in @('engine', 'iwad', 'pv', 'name', 'character', 'skill', 'lastFriend', 'friendCharacter', 'nameAsked', 'pvCode', 'iwadCode')) {
+    foreach ($k in @('engine', 'iwad', 'pv', 'name', 'character', 'skill', 'friendlyFire', 'lastFriend', 'friendCharacter', 'nameAsked', 'pvCode', 'iwadCode')) {
         if (-not ($s.PSObject.Properties.Name -contains $k)) { $s | Add-Member -NotePropertyName $k -NotePropertyValue '' }
     }
     if (-not ($s.PSObject.Properties.Name -contains 'friends')) { $s | Add-Member -NotePropertyName friends -NotePropertyValue @() }
@@ -621,7 +621,14 @@ if ($Mode -eq 'host') {
         if ($hp -eq 'automatic') { $hp = '0' }
         $hv = 0.0
         if (-not [double]::TryParse($hp, [Globalization.NumberStyles]::Float, [Globalization.CultureInfo]::InvariantCulture, [ref]$hv) -or $hv -lt 0 -or $hv -gt 10) { $hv = 0 }
-        $gameArgs += @('-skill', $sk, '+tpvc_startmap', $map, '+tpvc_enemymult', $mv.ToString([Globalization.CultureInfo]::InvariantCulture), '+tpvc_enemyhealth', $hv.ToString([Globalization.CultureInfo]::InvariantCulture))
+        Say ''
+        Say 'Friendly fire: can players hurt each other? off, half or on. You can change it in the game too:'
+        Say 'Options > Pink Valley co-op > Friendly fire (host only).'
+        $ff = (Ask 'Friendly fire' $(if ($s.friendlyFire) { $s.friendlyFire } else { 'off' })).ToLower()
+        if (@('off', 'half', 'on') -notcontains $ff) { Say "  (don't know that one, keeping off)" 'DarkYellow'; $ff = 'off' }
+        $s.friendlyFire = $ff
+        $td = @{ off = '0'; half = '0.5'; on = '1' }[$ff]
+        $gameArgs += @('-skill', $sk, '+tpvc_startmap', $map, '+tpvc_enemymult', $mv.ToString([Globalization.CultureInfo]::InvariantCulture), '+tpvc_enemyhealth', $hv.ToString([Globalization.CultureInfo]::InvariantCulture), '+teamdamage', $td)
     }
 
     # Packet loss on long or shaky connections makes the game freeze for a moment while it waits for

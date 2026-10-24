@@ -1,0 +1,10 @@
+**Friendly fire toggle**
+- Host co-op.bat now asks whether players can hurt each other: off, half or on (Enter keeps what you picked last time; off until you change it). It can also be flipped during the game in Options > Pink Valley co-op > Friendly fire (host only).
+- This is the engine's own teamdamage setting, so it applies to every weapon and to splash damage, and the host's choice reaches everyone.
+- The add-on itself only gained the menu entry and a self-test check, so v21 and v22 players can play together.
+
+Already have the co-op files? Just run Host co-op.bat or Join co-op.bat with the internet on and it updates itself. Everyone in a game needs the same version.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE PINK VALLEY 1.1 ENGLISH VERSION from ModDB.
+
+The Pink Valley is by Vamvilodon. Beta Tilin's sprites and Ella's HUD faces are by TURI. LZS picture by Baican. This co-op add-on is an unofficial fan project by gore.
