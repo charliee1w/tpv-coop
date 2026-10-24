@@ -2,6 +2,7 @@
 server bool tpvc_follow = true;              // pull friends to the host whenever the host gets teleported
 server string tpvc_startmap = "A_NEW_DAY";   // map a new co-op game starts on
 server float tpvc_enemymult = 0;             // how many of each map-placed enemy (1 = normal, 2 = double, max 10; 0 = one per player)
+server float tpvc_enemyhealth = 0;           // how tough each enemy is (1 = normal, 2 = double, max 10; 0 = fill the gap between the enemy multiplier and the player count, up to 4)
 server bool tpvc_debug = false;              // print what the co-op layer does to the console
 
 // Per player (each player sets their own; everyone else sees it).

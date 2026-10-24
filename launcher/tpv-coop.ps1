@@ -613,7 +613,15 @@ if ($Mode -eq 'host') {
         if ($mult -eq 'one per player') { $mult = '0' }
         $mv = 0.0
         if (-not [double]::TryParse($mult, [Globalization.NumberStyles]::Float, [Globalization.CultureInfo]::InvariantCulture, [ref]$mv) -or $mv -lt 0 -or $mv -gt 10) { $mv = 0 }
-        $gameArgs += @('-skill', $sk, '+tpvc_startmap', $map, '+tpvc_enemymult', $mv.ToString([Globalization.CultureInfo]::InvariantCulture))
+        Say ''
+        Say 'Enemy health: how tough each enemy is (1 = normal, 2 = double, up to 4, 1.5 works too). Unlike more'
+        Say 'enemies, more health costs no performance. Enter = automatic: when there are fewer enemies than'
+        Say 'players, health makes up the difference (10 players at x4 enemies = x2.5 health, never above x4).'
+        $hp = Ask 'Enemy health' 'automatic'
+        if ($hp -eq 'automatic') { $hp = '0' }
+        $hv = 0.0
+        if (-not [double]::TryParse($hp, [Globalization.NumberStyles]::Float, [Globalization.CultureInfo]::InvariantCulture, [ref]$hv) -or $hv -lt 0 -or $hv -gt 10) { $hv = 0 }
+        $gameArgs += @('-skill', $sk, '+tpvc_startmap', $map, '+tpvc_enemymult', $mv.ToString([Globalization.CultureInfo]::InvariantCulture), '+tpvc_enemyhealth', $hv.ToString([Globalization.CultureInfo]::InvariantCulture))
     }
 
     # Packet loss on long or shaky connections makes the game freeze for a moment while it waits for

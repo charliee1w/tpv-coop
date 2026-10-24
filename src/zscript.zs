@@ -112,6 +112,7 @@ class TPVC_Handler : StaticEventHandler
 	Array<Actor> newSpawns;	// spawned by scripts this tic, checked once their tags are set
 	Array<Actor> myCopies;	// copies this add-on made on this map (never copied again)
 	const MAX_WAVE_COPIES = 800;	// safety cap per map (room for 10 players' worth)
+	int mapScaled;		// enemies whose health was raised on this map (see HealthMult)
 
 	// Counters (shown by tpvc_status, checked by the self-test).
 	int nBlocked;
@@ -709,7 +710,7 @@ class TPVC_Handler : StaticEventHandler
 
 		// Enemy copies are made once, when a map starts fresh. A save already contains them.
 		multiplyPending = !e.IsSaveGame;
-		if (multiplyPending) { mapOriginals = 0; mapCopies = 0; mapExpected = 0; mapWaveCopies = 0; waveAcc = 0; }
+		if (multiplyPending) { mapOriginals = 0; mapCopies = 0; mapExpected = 0; mapWaveCopies = 0; waveAcc = 0; mapScaled = 0; }
 		newSpawns.Clear();
 		myCopies.Clear();
 
@@ -1360,6 +1361,46 @@ class TPVC_Handler : StaticEventHandler
 		return min(m, 10.0);	// up to 10 players, so up to 10 of each enemy
 	}
 
+	// How tough each enemy is: tpvc_enemyhealth, or when it is 0 whatever the enemy multiplier
+	// leaves short of one enemy per player (10 players at x4 enemies: x2.5 health; 4 players at
+	// x4: x1), never above x4 by itself. More health costs nothing to run, unlike more enemies:
+	// every PC thinks for every enemy every tic, but a bigger number is free.
+	double HealthMult()
+	{
+		double h = tpvc_enemyhealth;
+		if (h <= 0.001)
+		{
+			int n = 0;
+			for (int i = 0; i < MAXPLAYERS; i++) if (playeringame[i]) n++;
+			double m = EnemyMult();
+			h = m > 0.001 ? n / m : 1;
+			if (h > 4) h = 4;
+		}
+		if (h < 1) h = 1;
+		return min(h, 10.0);
+	}
+
+	// Health scaling applies to every hostile monster that isn't a boss or a story enemy, tagged
+	// or not: it changes how long they last, never how many there are or what their death
+	// triggers. (The copies' filter is stricter, see CanCopy.) The gib threshold and anything that
+	// reads the class's own health are untouched; the only enemies whose scripts check their
+	// health are on the deny list.
+	bool CanScale(Actor a)
+	{
+		if (!a.bIsMonster || !a.bCountKill || a.bFriendly || a.bBoss || a.bBossDeath || a.player) return false;
+		if (a.health <= 0) return false;
+		if (!a.FindState("Missile") && !a.FindState("Melee")) return false;
+		if (copyDeny.Find(a.GetClassName()) != copyDeny.Size()) return false;
+		return true;
+	}
+
+	void ScaleHealth(Actor a, double h)
+	{
+		if (!a || h < 1.001 || a.health <= 0) return;
+		a.health = int(a.health * h + 0.5);
+		mapScaled++;
+	}
+
 	bool CanCopy(Actor a)
 	{
 		if (!a.bIsMonster || !a.bCountKill || a.bFriendly || a.bBoss || a.bBossDeath || a.player) return false;
@@ -1378,12 +1419,19 @@ class TPVC_Handler : StaticEventHandler
 		mapCopies = 0;
 		mapExpected = 0;
 		double mult = EnemyMult();
-		if (mult < 1.001) return;
+		double hm = HealthMult();
+		if (mult < 1.001 && hm < 1.001) return;
 
+		// Map-placed enemies only: what scripts spawn (including during the map's start script)
+		// comes through WorldThingSpawned and is handled in CopyScriptWaves, so nothing is counted twice.
 		Array<Actor> originals;
 		let it = ThinkerIterator.Create("Actor");
 		for (Actor a = Actor(it.Next()); a; a = Actor(it.Next()))
+		{
+			if (!(a.SpawnFlags & (MTF_SINGLE | MTF_COOPERATIVE | MTF_DEATHMATCH))) continue;
+			if (CanScale(a)) ScaleHealth(a, hm);
 			if (CanCopy(a)) originals.Push(a);
+		}
 
 		if (tpvc_debug)
 		{
@@ -1426,12 +1474,12 @@ class TPVC_Handler : StaticEventHandler
 			for (int k = 0; k < extra; k++)
 			{
 				let c = SpawnCopy(originals[i], k);
-				if (c) { myCopies.Push(c); mapCopies++; }
+				if (c) { ScaleHealth(c, hm); myCopies.Push(c); mapCopies++; }
 			}
 		}
 		spawningCopies = false;
 		mapOriginals = originals.Size();
-		Dbg(String.Format("enemy multiplier x%.2f: %d placed enemies, %d extra spawned (%d wanted)", mult, mapOriginals, mapCopies, mapExpected));
+		Dbg(String.Format("enemy multiplier x%.2f: %d placed enemies, %d extra spawned (%d wanted); enemy health x%.2f on %d so far", mult, mapOriginals, mapCopies, mapExpected, hm, mapScaled));
 	}
 
 	// Script waves: monsters a script spawns as a tagged group (Un bacio's waves all share one
@@ -1439,7 +1487,7 @@ class TPVC_Handler : StaticEventHandler
 	// the script waits for them too. One-off spawns with a tag of their own stay single.
 	override void WorldThingSpawned(WorldEvent e)
 	{
-		if (spawningCopies || !multiplayer || !modPresent || EnemyMult() < 1.001) return;
+		if (spawningCopies || !multiplayer || !modPresent || (EnemyMult() < 1.001 && HealthMult() < 1.001)) return;
 		Actor a = e.Thing;
 		if (!a || !a.bIsMonster || a.player) return;
 		if (a.SpawnFlags & (MTF_SINGLE | MTF_COOPERATIVE | MTF_DEATHMATCH)) return;	// map-placed: handled at map start
@@ -1465,16 +1513,20 @@ class TPVC_Handler : StaticEventHandler
 
 	void CopyScriptWaves()
 	{
+		double hm = HealthMult();
 		Array<Actor> cands;
 		for (int i = 0; i < newSpawns.Size(); i++)
 		{
 			let a = newSpawns[i];
-			if (a && myCopies.Find(a) == myCopies.Size() && CanCopyWave(a)) cands.Push(a);
+			if (!a || myCopies.Find(a) != myCopies.Size()) continue;	// our own copies were scaled when made
+			if (CanScale(a)) ScaleHealth(a, hm);
+			if (CanCopyWave(a)) cands.Push(a);
 		}
 		newSpawns.Clear();
 		if (cands.Size() == 0) return;
 
 		double mult = EnemyMult();
+		if (mult < 1.001) return;
 		double extraEach = mult - 1;
 		int made = 0;
 		spawningCopies = true;
@@ -1488,7 +1540,7 @@ class TPVC_Handler : StaticEventHandler
 			for (int k = 0; k < extra && mapWaveCopies + made < MAX_WAVE_COPIES; k++)
 			{
 				let c = SpawnCopy(o, k);
-				if (c) { c.ChangeTid(o.tid); myCopies.Push(c); made++; }
+				if (c) { c.ChangeTid(o.tid); ScaleHealth(c, hm); myCopies.Push(c); made++; }
 			}
 		}
 		spawningCopies = false;
@@ -1665,8 +1717,8 @@ class TPVC_Handler : StaticEventHandler
 		int nCorpse = 0;
 		let cit = ThinkerIterator.Create("TPVC_Costume");
 		for (let a = TPVC_Costume(cit.Next()); a; a = TPVC_Costume(cit.Next())) { if (a.orphan) nCorpse++; else nLive++; }
-		Console.Printf("\cf[co-op status]\c- map %s tic %d  mod=%d  blocked=%d doors=%d rattles=%d pickups=%d rerouted=%d placed=%d respawns=%d  enemies x%.2f: %d placed, %d extra, %d extra in waves  costumes %d (+%d on corpses)  stand-ins %d/%d (%d left)  home armed %d",
-			level.MapName, level.maptime, modPresent ? 1 : 0, nBlocked, nGuestDoors, nRattles, nGuestPickups, nRerouted, nPlaced, nRespawns, EnemyMult(), mapOriginals, mapCopies, mapWaveCopies, nLive, nCorpse,
+		Console.Printf("\cf[co-op status]\c- map %s tic %d  mod=%d  blocked=%d doors=%d rattles=%d pickups=%d rerouted=%d placed=%d respawns=%d  enemies x%.2f: %d placed, %d extra, %d extra in waves  enemy health x%.2f on %d  costumes %d (+%d on corpses)  stand-ins %d/%d (%d left)  home armed %d",
+			level.MapName, level.maptime, modPresent ? 1 : 0, nBlocked, nGuestDoors, nRattles, nGuestPickups, nRerouted, nPlaced, nRespawns, EnemyMult(), mapOriginals, mapCopies, mapWaveCopies, HealthMult(), mapScaled, nLive, nCorpse,
 			standInsMade, standInsWanted, standInsLeft, nHomeArmed);
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
@@ -1812,15 +1864,34 @@ class TPVC_Handler : StaticEventHandler
 			else
 				Console.Printf("  SKIP enemy multiplier (x%.2f, %d copyable enemies on this map)", EnemyMult(), mapOriginals);
 
-			// 5. A scripted wave (three monsters sharing a tag) gets extra members with the same tag.
+			// Enemy health: every copy made at map start has the raised health.
+			if (HealthMult() > 1.001 && mapCopies > 0)
+			{
+				int wrong = 0;
+				int seen = 0;
+				for (int k = 0; k < myCopies.Size(); k++)
+				{
+					let c = myCopies[k];
+					if (!c || c.health <= 0) continue;
+					seen++;
+					if (c.health != int(c.SpawnHealth() * HealthMult() + 0.5)) wrong++;
+				}
+				Check(seen > 0 && wrong == 0, String.Format("enemy health x%.2f: every copy made at map start has it (%d checked, %d wrong)", HealthMult(), seen, wrong));
+			}
+			else if (HealthMult() > 1.001) Console.Printf("  SKIP enemy health on map copies (none on this map)");
+
+			// 5. A scripted wave (three monsters sharing a tag) gets extra members with the same tag,
+			//    and a boss-flagged monster is left at its normal health.
 			tWaveBefore = mapWaveCopies;
-			if (EnemyMult() > 1.001)
+			if (EnemyMult() > 1.001 || HealthMult() > 1.001)
 			{
 				for (int w = 0; w < 3; w++)
 				{
 					let foe = Actor.Spawn("TPVC_TestFoe", host.pos + (0, 0, 4));
 					if (foe) foe.ChangeTid(31001);
 				}
+				let bossy = Actor.Spawn("TPVC_TestFoe", host.pos + (0, 0, 4));
+				if (bossy) { bossy.bBoss = true; bossy.ChangeTid(31002); }
 			}
 
 			// Set up the mirrored checks for the next tic.
@@ -2020,6 +2091,30 @@ class TPVC_Handler : StaticEventHandler
 				Check(mapWaveCopies > tWaveBefore && inWave > 3 && inWave <= wanted + 1, String.Format("a scripted wave of 3 grows to %d with the same tag (x%.2f)", inWave, EnemyMult()));
 				tInWave = inWave;
 			}
+			if (HealthMult() > 1.001)
+			{
+				int wrong = 0;
+				int seen = 0;
+				let wi = level.CreateActorIterator(31001);
+				for (Actor f = wi.Next(); f; f = wi.Next())
+				{
+					seen++;
+					if (f.health != int(f.SpawnHealth() * HealthMult() + 0.5)) wrong++;
+				}
+				Check(seen >= 3 && wrong == 0, String.Format("enemy health x%.2f: a scripted spawn and its wave copies get it (%d checked, %d wrong)", HealthMult(), seen, wrong));
+				int bossHp = -1;
+				int bossSpawn = 0;
+				let bi = level.CreateActorIterator(31002);
+				for (Actor f = bi.Next(); f; f = bi.Next()) { bossHp = f.health; bossSpawn = f.SpawnHealth(); }
+				Check(bossHp > 0 && bossHp == bossSpawn, String.Format("a boss keeps its normal health (%d of %d)", bossHp, bossSpawn));
+			}
+			if (EnemyMult() > 1.001 || HealthMult() > 1.001)
+			{
+				Array<Actor> bossFoes;
+				let bi2 = level.CreateActorIterator(31002);
+				for (Actor f = bi2.Next(); f; f = bi2.Next()) bossFoes.Push(f);
+				for (int k = 0; k < bossFoes.Size(); k++) if (bossFoes[k]) { bossFoes[k].ClearCounters(); bossFoes[k].Destroy(); }
+			}
 
 			if (tWeap) host.TakeInventory(tWeap, 1);
 			testStage = 3;
@@ -2037,11 +2132,11 @@ class TPVC_Handler : StaticEventHandler
 			if (tWeap) Check(g.FindInventory(tWeap) == null, "guest loses a weapon when the host loses it");
 			Check(abs(g.Speed - host.Speed) < 0.001, "guest speed follows the host back");
 
-			if (EnemyMult() > 1.001)
+			if (EnemyMult() > 1.001 || HealthMult() > 1.001)
 			{
 				// The copies must not get copied again on the next tic.
 				int inWave = CountTid(31001);
-				Check(inWave == tInWave, String.Format("the wave stays at %d a tic later (copies aren't copied again)", inWave));
+				if (EnemyMult() > 1.001) Check(inWave == tInWave, String.Format("the wave stays at %d a tic later (copies aren't copied again)", inWave));
 				Array<Actor> foes;
 				let fi = level.CreateActorIterator(31001);
 				for (Actor f = fi.Next(); f; f = fi.Next()) foes.Push(f);

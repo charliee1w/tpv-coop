@@ -3,7 +3,8 @@
 Play The Pink Valley with up to 9 friends (10 players on UZDoom, 8 on GZDoom). Player 1 (the
 host) plays the game exactly as in single player and is the only one who triggers story events.
 Everyone else is another Tilin who tags along: they move, fight, open doors and pick up supplies.
-An optional enemy multiplier adds more enemies so the fights hold up with more people.
+An optional enemy multiplier adds more enemies, and an enemy health setting makes each one
+tougher, so the fights hold up with more people.
 
 This is a fan add-on, not part of the mod. It doesn't replace or include any of Vamvilodon's
 files, so it only works on top of his `THE_PINK_VALLEY - ENG.pk3`. In single player it does
@@ -141,7 +142,23 @@ scripted story scenes. Bosses keep their normal health.
 
 Every PC runs every enemy, and the slowest PC sets the pace for everyone. With 10 players, x10
 on a busy map is about 4 to 5 times the work of x1. For a big group on mixed PCs, 2 to 4 is
-safer than one per player.
+safer than one per player, and enemy health (below) makes up the rest.
+
+## Enemy health
+
+The host also picks how tough each enemy is: 1 is normal, 2 is double, up to 4 (1.5 works too).
+Unlike more enemies, more health costs no performance at all, so it's the way to make a big
+group's game harder without anyone's PC lagging. The default is automatic: when the enemy
+multiplier is below one per player, health makes up the difference, so 10 players at x4 enemies
+get x2.5 health, and 4 players at x4 enemies get x1. Automatic never goes above x4.
+
+- It applies to every hostile enemy that isn't a boss or a story enemy, including the ones scripts
+  spawn, tagged or not. It only changes how long they last, never how many there are or what
+  their death triggers.
+- Bosses and story enemies (the same list as above) keep their normal health, so their phases
+  and scripted checks work as written.
+- The maps place a fixed amount of ammo, so very high health makes ammo tighter. 2 to 2.5 is
+  plenty for most groups.
 
 ## Big groups and friends far away
 
@@ -182,6 +199,9 @@ Join co-op.bat asks and pick the same save. You can't load from the menu during 
   asks for it.
 - `tpvc_enemymult <n>`: enemy multiplier, 1 to 10, or 0 for one per player (the host .bat asks
   for it). It takes effect the next time a map starts.
+- `tpvc_enemyhealth <n>`: enemy health, 1 to 10, or 0 for automatic (fills the gap between the
+  enemy multiplier and the player count, up to 4; the host .bat asks for it). Takes effect the
+  next time a map starts.
 - `tpvc_debug 0/1`: print what the add-on does to the console
 
 ## Known limits
@@ -232,6 +252,8 @@ The add-on was tested in real GZDoom 4.14.2 net games on one PC, with 2 and with
 - the host keeping its scripted speed after a respawn
 - with more than one friend: every friend landing next to the host on their own spot
 - with the enemy multiplier: map copies, and a scripted wave growing under its tag
+- with enemy health: every map copy and every scripted spawn has the raised health, and a boss
+  keeps its normal health
 - characters: every character's frames exist, a guest dressed as Ella is drawn
   where they stand and gets Ella's HUD face, the costume stays on the corpse and plays the
   death, and switching back to Tilin shows Tilin again

@@ -1,0 +1,12 @@
+**Enemy health: harder co-op without the lag**
+- New host setting, asked right after the enemy multiplier: how tough each enemy is (1 = normal, 2 = double, up to 4, 1.5 works too). More health costs no performance at all, unlike more enemies, so a big group can keep enemies at x2-x4 and still have a fight.
+- Enter = automatic: when the enemy multiplier is below one per player, health makes up the difference. 10 players at x4 enemies get x2.5 health; 4 players at x4 get x1. Automatic never goes above x4.
+- It applies to every hostile enemy that is not a boss or a story enemy, including the ones scripts spawn. Bosses and story enemies keep their normal health, so their phases and scripted checks work as written. It only changes how long enemies last, never how many there are or what their death triggers.
+- Console: tpvc_enemyhealth (0 = automatic). Takes effect the next time a map starts.
+- Everyone in a game needs v21 (the launcher updates itself).
+
+Already have the co-op files? Just run Host co-op.bat or Join co-op.bat with the internet on and it updates itself. Everyone in a game needs the same version.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE PINK VALLEY 1.1 ENGLISH VERSION from ModDB.
+
+The Pink Valley is by Vamvilodon. Beta Tilin's sprites and Ella's HUD faces are by TURI. LZS picture by Baican. This co-op add-on is an unofficial fan project by gore.
