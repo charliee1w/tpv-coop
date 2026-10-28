@@ -1,0 +1,10 @@
+**Fix: hosting on an older UZDoom (4.14.x)**
+- "You cannot host a game with 10 players. The limit is currently 8." happened to anyone hosting with UZDoom 4.14.3: the launcher assumed every uzdoom.exe was 5.0.3. It now reads the engine version. On UZDoom 5 it still opens 10 spots with the waiting window; on an older UZDoom it works like GZDoom (asks for 2-8 players, starts when that many have joined) and tells you 5.0.3 is the version the add-on is made for.
+- The launcher also shows the engine version next to the game name.
+- Launcher only: the add-on is the same as v22, so v22 and v23 players can play together.
+
+Already have the co-op files? Just run Host co-op.bat or Join co-op.bat with the internet on and it updates itself. Everyone in a game needs the same version.
+
+**New players:** download TPV-co-op.zip below and read README.md inside. You need UZDoom 5.0.3 (or GZDoom 4.14.2), DOOM2.WAD or freedoom2.wad, and THE PINK VALLEY 1.1 ENGLISH VERSION from ModDB.
+
+The Pink Valley is by Vamvilodon. Beta Tilin's sprites and Ella's HUD faces are by TURI. LZS picture by Baican. This co-op add-on is an unofficial fan project by gore.

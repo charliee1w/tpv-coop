@@ -353,7 +353,19 @@ function Find-GameFiles($s) {
 
     $s.engine = $engine; $s.iwad = $iwad; $s.pv = $pv
     Save-Settings $s
-    return @{ Engine = $engine; Iwad = $iwad; Pv = $pv; IsUZ = ((Split-Path -Leaf $engine) -like 'uzdoom*') }
+    # Which engine, and which version: UZDoom 5 hosts up to 10 from its waiting window and keeps net
+    # game saves apart; an older UZDoom (4.14.x) is GZDoom's netcode with the 8-player limit, so it
+    # is treated like GZDoom ("You cannot host a game with 10 players. The limit is currently 8.").
+    $isUZ = (Split-Path -Leaf $engine) -like 'uzdoom*'
+    $major = 0
+    $ver = ''
+    try { $vi = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($engine); $major = [int]$vi.FileMajorPart; $ver = [string]$vi.FileVersion } catch { }
+    $uz5 = $isUZ -and $major -ge 5
+    if ($isUZ -and -not $uz5) {
+        Say ("Your UZDoom is version {0}. The add-on is made for UZDoom 5.0.3; this older one works like GZDoom:" -f $(if ($ver) { $ver } else { '?' })) 'Yellow'
+        Say 'up to 8 players, no waiting window. Get 5.0.3 (see README.md) when you can.' 'Yellow'
+    }
+    return @{ Engine = $engine; Iwad = $iwad; Pv = $pv; IsUZ = $isUZ; UZ5 = $uz5; Version = $ver }
 }
 
 # ---------------------------------------------------------------------------------------------
@@ -409,7 +421,8 @@ function Get-SavedGamesDir {
 # apart, in a NetGame folder (Saved Games\UZDoom\NetGame\<game>); GZDoom keeps them with the rest.
 function Find-Saves($g) {
     $exeDir = Split-Path -Parent $g.Engine
-    if ($g.IsUZ) { $dirs = @((Join-Path (Get-SavedGamesDir) 'UZDoom\NetGame'), (Join-Path $exeDir 'Save\NetGame')) }
+    if ($g.UZ5) { $dirs = @((Join-Path (Get-SavedGamesDir) 'UZDoom\NetGame'), (Join-Path $exeDir 'Save\NetGame')) }
+    elseif ($g.IsUZ) { $dirs = @((Join-Path (Get-SavedGamesDir) 'UZDoom'), (Join-Path $exeDir 'Save')) }
     else { $dirs = @((Join-Path (Get-SavedGamesDir) 'GZDoom'), (Join-Path $exeDir 'Save')) }
     $files = @()
     foreach ($d in $dirs) {
@@ -545,7 +558,7 @@ if (-not $NoUpdate -and -not $Updated -and $s.autoUpdate -ne $false) {
 
 $g = Find-GameFiles $s
 Choose-Iwad $s $g
-Say ("Game: {0}   IWAD: {1}" -f (Split-Path -Leaf $g.Engine), (Split-Path -Leaf $g.Iwad)) 'DarkGray'
+Say ("Game: {0} {1}   IWAD: {2}" -f (Split-Path -Leaf $g.Engine), $g.Version, (Split-Path -Leaf $g.Iwad)) 'DarkGray'
 
 # One code for the three files UZDoom checks when someone joins: the add-on, The Pink Valley and
 # the IWAD. Everyone in a game needs the same code; the part that differs shows which file.
@@ -642,12 +655,12 @@ if ($Mode -eq 'host') {
     $name = Ask-Name $s
     Save-Settings $s
 
-    if ($g.IsUZ) {
+    if ($g.UZ5) {
         # 10 spots, started from the waiting window. net_limitsaves 0: anyone can save, not just the host.
         $gameArgs += @('-host', '10', '+net_limitsaves 0')
     }
     else {
-        # GZDoom can't do more than 8.
+        # GZDoom (and UZDoom 4.14) can't do more than 8, and start when that many have joined.
         $n = Ask 'How many players in total, including you? 2-8' '2'
         if ($n -notmatch '^[2-8]$') { $n = '2' }
         $gameArgs += @('-host', $n)
@@ -658,7 +671,7 @@ if ($Mode -eq 'host') {
 
     Say ''
     Say 'Starting. Your friends run "Join co-op.bat" and pick you (or type your address).' 'Green'
-    if ($g.IsUZ) { Say 'When everyone shows up in the waiting window, click "Start Game".' 'Green' }
+    if ($g.UZ5) { Say 'When everyone shows up in the waiting window, click "Start Game".' 'Green' }
     if ($load) { Say ("Everyone loads {0} automatically." -f $load.File) 'Green' }
     Say "In the game, J pulls everyone over to you. N shows everyone's connection (ping)." 'DarkGray'
     Start-Game $gameArgs
@@ -717,7 +730,7 @@ if ($Mode -eq 'join') {
     $gameArgs = @() + $common + @('-join', $pick.address)
     if ($s.character) { $gameArgs += @('+tpvc_character', ('"{0}"' -f $s.character)) }
     if ($name) { $gameArgs += @('+name', ('"{0}"' -f $name)) }
-    if (-not $g.IsUZ) {
+    if (-not $g.UZ5) {
         # GZDoom doesn't pass the host's save along, so pick the same one here.
         Say ''
         $yn = Ask 'Is the host continuing a save? y/n' 'n'

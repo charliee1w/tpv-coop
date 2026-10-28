@@ -12,7 +12,8 @@ nothing.
 
 ## What everyone needs
 
-- **UZDoom 5.0.3** (recommended) or GZDoom **4.14.2**: everyone on the same engine and the same version
+- **UZDoom 5.0.3** (recommended) or GZDoom **4.14.2**: everyone on the same engine and the same version.
+  An older UZDoom (4.14.x) runs it too, but like GZDoom: up to 8 players and no waiting window
 - the same IWAD as everyone else: `DOOM2.WAD`, or `freedoom2.wad` if your group uses Freedoom.
   It has to be the exact same file for everyone, or UZDoom won't let you join. If your PC has
   both, the launcher asks which one to use (Enter keeps the one you used last time)
